@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -21,46 +21,57 @@ export const GravityStarsBackground = ({
     children,
 }: GravityStarsBackgroundProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const animationRef = useRef<number | null>(null);
+    const starsRef = useRef<Star[]>([]);
+    const isRunningRef = useRef(false);
+
+    const initStars = useCallback((width: number, height: number) => {
+        const isMobile = window.innerWidth < 768;
+        const starCount = isMobile ? 50 : 100;
+        
+        starsRef.current = [];
+        for (let i = 0; i < starCount; i++) {
+            starsRef.current.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: Math.random() * 0.5 + 0.1,
+                radius: Math.random() * 1.5,
+                alpha: Math.random(),
+            });
+        }
+    }, []);
 
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
-        const ctx = canvas.getContext("2d");
+        const ctx = canvas.getContext("2d", { alpha: true });
         if (!ctx) return;
 
-        let animationFrameId: number;
-        let stars: Star[] = [];
-        const numStars = 100;
+        // Prevent double animation in StrictMode
+        if (isRunningRef.current) return;
+        isRunningRef.current = true;
 
         const resizeCanvas = () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            initStars();
-        };
-
-        const initStars = () => {
-            stars = [];
-            for (let i = 0; i < numStars; i++) {
-                stars.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    vx: (Math.random() - 0.5) * 0.5,
-                    vy: Math.random() * 0.5 + 0.1, // Gravity effect
-                    radius: Math.random() * 1.5,
-                    alpha: Math.random(),
-                });
-            }
+            initStars(canvas.width, canvas.height);
         };
 
         const drawStars = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (!isRunningRef.current) return;
+            
+            const width = canvas.width;
+            const height = canvas.height;
+
+            ctx.clearRect(0, 0, width, height);
             ctx.fillStyle = "white";
 
-            stars.forEach((star) => {
+            starsRef.current.forEach((star) => {
+                ctx.globalAlpha = star.alpha;
                 ctx.beginPath();
                 ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
                 ctx.fill();
 
                 // Update position
@@ -68,36 +79,45 @@ export const GravityStarsBackground = ({
                 star.y += star.vy;
 
                 // Reset if out of bounds
-                if (star.y > canvas.height) {
+                if (star.y > height) {
                     star.y = 0;
-                    star.x = Math.random() * canvas.width;
+                    star.x = Math.random() * width;
                 }
-                if (star.x > canvas.width) {
+                if (star.x > width) {
                     star.x = 0;
                 } else if (star.x < 0) {
-                    star.x = canvas.width;
+                    star.x = width;
                 }
             });
-
-            animationFrameId = requestAnimationFrame(drawStars);
+            
+            ctx.globalAlpha = 1.0;
+            animationRef.current = requestAnimationFrame(drawStars);
         };
 
-        resizeCanvas();
-        drawStars();
+        // Initialize with a small delay to ensure DOM is ready
+        const initTimer = setTimeout(() => {
+            resizeCanvas();
+            drawStars();
+        }, 50);
 
         window.addEventListener("resize", resizeCanvas);
 
         return () => {
+            isRunningRef.current = false;
+            clearTimeout(initTimer);
             window.removeEventListener("resize", resizeCanvas);
-            cancelAnimationFrame(animationFrameId);
+            if (animationRef.current) {
+                cancelAnimationFrame(animationRef.current);
+            }
         };
-    }, []);
+    }, [initStars]);
 
     return (
         <div className={cn("relative w-full h-full overflow-hidden", className)}>
             <canvas
                 ref={canvasRef}
                 className="absolute inset-0 w-full h-full pointer-events-none"
+                style={{ willChange: 'transform' }}
             />
             {children}
         </div>

@@ -60,7 +60,7 @@ export default function Skills({ repos, loading }: SkillsProps) {
     const skills = getSkills();
 
     return (
-        <section ref={sectionRef} id="skills" className="py-20 bg-white dark:bg-transparent transition-colors duration-300">
+        <section ref={sectionRef} id="skills" className="py-20 bg-light-card dark:bg-transparent transition-colors duration-300">
             <motion.div
                 variants={staggerContainer(0.1, 0.1)}
                 initial="hidden"
@@ -82,7 +82,7 @@ export default function Skills({ repos, loading }: SkillsProps) {
                                     <motion.span
                                         key={lang}
                                         variants={zoomIn(index * 0.05, 0.5)}
-                                        className="px-4 py-2 bg-gray-100 dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-full text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-primary/50 transition-colors cursor-default flex items-center"
+                                        className="px-4 py-2 bg-light-bg dark:bg-dark-card border border-light-border dark:border-dark-border rounded-full text-sm font-medium text-light-text dark:text-gray-300 hover:border-primary/50 transition-colors cursor-default flex items-center"
                                     >
                                         {getSkillIcon(lang)}
                                         {lang}

@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useCallback, memo } from 'react';
 import { FaPaperPlane, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
 
 import { useTranslation } from 'react-i18next';
 
-export function Contact() {
+export const Contact = memo(function Contact() {
     const { t } = useTranslation();
     const [formData, setFormData] = useState({
         name: '',
@@ -11,20 +11,21 @@ export function Contact() {
         message: ''
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = useCallback((e: React.FormEvent) => {
         e.preventDefault();
         const { name, email, message } = formData;
         const subject = encodeURIComponent(`Contact from ${name} - Info Vibe Web`);
         const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
         window.location.href = `mailto:itisfuture2412@gmail.com?subject=${subject}&body=${body}`;
-    };
+    }, [formData]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setFormData({ ...formData, [e.target.id]: e.target.value });
-    };
+    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { id, value } = e.target;
+        setFormData(prev => ({ ...prev, [id]: value }));
+    }, []);
 
     return (
-        <section id="contact" className="py-20 bg-white dark:bg-transparent transition-colors duration-300">
+        <section id="contact" className="py-20 bg-light-card dark:bg-transparent transition-colors duration-300">
             <div className="container mx-auto px-6">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">{t('contact.title')}</h2>
@@ -32,7 +33,7 @@ export function Contact() {
                     <div className="w-20 h-1.5 bg-gradient-to-r from-primary to-secondary mx-auto rounded-full mt-4"></div>
                 </div>
                 {/* Contact Form */}
-                <div className="max-w-2xl mx-auto bg-gray-50 dark:bg-dark-card rounded-2xl p-8 border border-gray-200 dark:border-dark-border shadow-2xl dark:shadow-none glow-effect">
+                <div className="max-w-2xl mx-auto bg-light-bg dark:bg-dark-card rounded-2xl p-8 border border-light-border dark:border-dark-border shadow-2xl dark:shadow-none glow-effect">
                     <form onSubmit={handleSubmit}>
                         <div className="grid md:grid-cols-2 gap-6 mb-6">
                             <div>
@@ -43,7 +44,7 @@ export function Contact() {
                                     value={formData.name}
                                     onChange={handleChange}
                                     required
-                                    className="w-full bg-white dark:bg-dark-bg border border-gray-300 dark:border-dark-border rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder-gray-400 dark:placeholder-gray-600"
+                                    className="w-full bg-light-card dark:bg-dark-bg border border-light-border dark:border-dark-border rounded-lg px-4 py-3 text-light-text dark:text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder-light-muted dark:placeholder-gray-600"
                                 />
                             </div>
                             <div>
@@ -54,7 +55,7 @@ export function Contact() {
                                     value={formData.email}
                                     onChange={handleChange}
                                     required
-                                    className="w-full bg-white dark:bg-dark-bg border border-gray-300 dark:border-dark-border rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder-gray-400 dark:placeholder-gray-600"
+                                    className="w-full bg-light-card dark:bg-dark-bg border border-light-border dark:border-dark-border rounded-lg px-4 py-3 text-light-text dark:text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder-light-muted dark:placeholder-gray-600"
                                 />
                             </div>
                         </div>
@@ -66,7 +67,7 @@ export function Contact() {
                                 value={formData.message}
                                 onChange={handleChange}
                                 required
-                                className="w-full bg-white dark:bg-dark-bg border border-gray-300 dark:border-dark-border rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder-gray-400 dark:placeholder-gray-600"
+                                className="w-full bg-light-card dark:bg-dark-bg border border-light-border dark:border-dark-border rounded-lg px-4 py-3 text-light-text dark:text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder-light-muted dark:placeholder-gray-600"
                             ></textarea>
                         </div>
                         <button type="submit" className="w-full bg-gradient-to-r from-primary to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 rounded-lg transition-all shadow-lg shadow-blue-500/20 transform hover:-translate-y-1 flex items-center justify-center">
@@ -77,12 +78,12 @@ export function Contact() {
             </div>
         </section>
     );
-}
+});
 
-export function Footer() {
+export const Footer = memo(function Footer() {
     const { t } = useTranslation();
     return (
-        <footer className="bg-white dark:bg-transparent border-t border-gray-200 dark:border-dark-border py-10 transition-colors duration-300">
+        <footer className="bg-light-card dark:bg-transparent border-t border-light-border dark:border-dark-border py-10 transition-colors duration-300">
             <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0">
                 {/* Left Side */}
                 <div className="text-center md:text-left">
@@ -109,4 +110,4 @@ export function Footer() {
             </div>
         </footer>
     );
-}
+});

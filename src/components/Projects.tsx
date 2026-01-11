@@ -33,7 +33,7 @@ export default function Projects({ repos, loading }: ProjectsProps) {
     const isInView = useInView(sectionRef, { once: true, amount: 0.1 });
 
     return (
-        <section ref={sectionRef} id="projects" className="py-20 bg-gray-50 dark:bg-transparent transition-colors duration-300">
+        <section ref={sectionRef} id="projects" className="py-20 bg-light-bg dark:bg-transparent transition-colors duration-300">
             <motion.div
                 variants={staggerContainer(0.1, 0.1)}
                 initial="hidden"
@@ -57,10 +57,10 @@ export default function Projects({ repos, loading }: ProjectsProps) {
                             <motion.div
                                 key={repo.id}
                                 variants={fadeIn("up", "tween", index * 0.1, 0.5)}
-                                className="bg-white dark:bg-dark-card rounded-2xl p-6 border border-gray-100 dark:border-dark-border shadow-lg dark:shadow-none hover:shadow-2xl dark:hover:border-primary/50 transition-all duration-300 group hover:-translate-y-2 flex flex-col h-full"
+                                className="bg-light-card dark:bg-dark-card rounded-2xl p-6 border border-light-border dark:border-dark-border shadow-lg dark:shadow-none hover:shadow-2xl dark:hover:border-primary/50 transition-all duration-300 group hover:-translate-y-2 flex flex-col h-full"
                             >
                                 <div className="flex justify-between items-start mb-4">
-                                    <div className="p-3 bg-gray-100 dark:bg-dark-bg rounded-lg text-primary">
+                                    <div className="p-3 bg-light-bg dark:bg-dark-bg rounded-lg text-primary">
                                         <FaBookOpen className="text-xl" />
                                     </div>
                                     <div className="flex gap-3 text-gray-400 dark:text-gray-500">
@@ -78,7 +78,7 @@ export default function Projects({ repos, loading }: ProjectsProps) {
                                 </p>
 
                                 <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-dark-border">
-                                    <span className="text-xs font-semibold px-2 py-1 rounded bg-gray-100 dark:bg-dark-bg text-gray-600 dark:text-gray-300 flex items-center">
+                                    <span className="text-xs font-semibold px-2 py-1 rounded bg-light-bg dark:bg-dark-bg text-light-muted dark:text-gray-300 flex items-center">
                                         <FaCircle className="text-[10px] mr-1" style={{ color: getLangColor(repo.language) }} /> {repo.language || 'Code'}
                                     </span>
                                     <a href={repo.html_url} target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-primary hover:underline flex items-center">

@@ -1,13 +1,14 @@
+import { memo } from 'react';
 import { experiences } from '../data/experience';
 import { FaBriefcase } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { fadeIn, staggerContainer } from '../utils/motion';
 
-export default function Experience() {
+function Experience() {
     const { t } = useTranslation();
     return (
-        <section id="experience" className="py-20 bg-gray-50 dark:bg-transparent transition-colors duration-300">
+        <section id="experience" className="py-20 bg-light-bg dark:bg-transparent transition-colors duration-300">
             <motion.div
                 variants={staggerContainer(0.1, 0.1)}
                 initial="hidden"
@@ -34,9 +35,9 @@ export default function Experience() {
 
                                 {/* Content Side */}
                                 <div className="w-full md:w-5/12">
-                                    <div className="bg-white dark:bg-dark-card p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-dark-border hover:border-primary/50 transition-colors relative">
+                                    <div className="bg-light-card dark:bg-dark-card p-6 rounded-2xl shadow-lg border border-light-border dark:border-dark-border hover:border-primary/50 transition-colors relative">
                                         {/* Mobile Icon - positioned inside card */}
-                                        <div className="md:hidden absolute -top-5 left-6 w-10 h-10 rounded-full bg-white dark:bg-dark-bg border-4 border-primary flex items-center justify-center z-10">
+                                        <div className="md:hidden absolute -top-5 left-6 w-10 h-10 rounded-full bg-light-card dark:bg-dark-bg border-4 border-primary flex items-center justify-center z-10">
                                             <FaBriefcase className="text-primary text-sm" />
                                         </div>
                                         <div className="mt-4 md:mt-0">
@@ -62,7 +63,7 @@ export default function Experience() {
                                 </div>
 
                                 {/* Desktop Dot - only visible on desktop, centered on timeline */}
-                                <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 w-10 h-10 rounded-full bg-white dark:bg-dark-bg border-4 border-primary items-center justify-center z-10">
+                                <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 w-10 h-10 rounded-full bg-light-card dark:bg-dark-bg border-4 border-primary items-center justify-center z-10">
                                     <FaBriefcase className="text-primary text-sm" />
                                 </div>
 
@@ -76,3 +77,5 @@ export default function Experience() {
         </section>
     );
 }
+
+export default memo(Experience);

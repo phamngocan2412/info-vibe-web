@@ -1,6 +1,6 @@
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
 import type { GitHubUser } from '../types';
-
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface AboutProps {
@@ -10,11 +10,11 @@ interface AboutProps {
 import { motion } from 'framer-motion';
 import { fadeIn, staggerContainer } from '../utils/motion';
 
-export default function About({ user }: AboutProps) {
+function About({ user }: AboutProps) {
     const { t } = useTranslation();
 
     return (
-        <section id="about" className="py-20 bg-white dark:bg-transparent transition-colors duration-300">
+        <section id="about" className="py-20 bg-light-card dark:bg-transparent transition-colors duration-300">
             <motion.div
                 variants={staggerContainer(0.2, 0.1)}
                 initial="hidden"
@@ -30,7 +30,7 @@ export default function About({ user }: AboutProps) {
                 <div className="grid md:grid-cols-2 gap-12">
                     <motion.div
                         variants={fadeIn("right", "tween", 0.2, 1)}
-                        className="bg-gray-50 dark:bg-dark-card p-8 rounded-3xl shadow-xl dark:shadow-none border border-gray-100 dark:border-dark-border relative overflow-hidden group h-full"
+                        className="bg-light-bg dark:bg-dark-card p-8 rounded-3xl shadow-xl dark:shadow-none border border-light-border dark:border-dark-border relative overflow-hidden group h-full"
                     >
                         {/* Decorative bg */}
                         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 dark:bg-primary/5 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-150 duration-500"></div>
@@ -39,7 +39,7 @@ export default function About({ user }: AboutProps) {
 
                         <div className="space-y-6 relative z-10">
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-white dark:bg-dark-bg border border-gray-100 dark:border-dark-border flex items-center justify-center text-primary text-xl shadow-sm group-hover:scale-110 transition-transform duration-300">
+                                <div className="w-12 h-12 rounded-full bg-light-card dark:bg-dark-bg border border-light-border dark:border-dark-border flex items-center justify-center text-primary text-xl shadow-sm group-hover:scale-110 transition-transform duration-300">
                                     <FaPhoneAlt />
                                 </div>
                                 <div>
@@ -49,7 +49,7 @@ export default function About({ user }: AboutProps) {
                             </div>
 
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-white dark:bg-dark-bg border border-gray-100 dark:border-dark-border flex items-center justify-center text-primary text-xl shadow-sm group-hover:scale-110 transition-transform duration-300">
+                                <div className="w-12 h-12 rounded-full bg-light-card dark:bg-dark-bg border border-light-border dark:border-dark-border flex items-center justify-center text-primary text-xl shadow-sm group-hover:scale-110 transition-transform duration-300">
                                     <FaEnvelope />
                                 </div>
                                 <div>
@@ -59,7 +59,7 @@ export default function About({ user }: AboutProps) {
                             </div>
 
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-white dark:bg-dark-bg border border-gray-100 dark:border-dark-border flex items-center justify-center text-primary text-xl shadow-sm group-hover:scale-110 transition-transform duration-300">
+                                <div className="w-12 h-12 rounded-full bg-light-card dark:bg-dark-bg border border-light-border dark:border-dark-border flex items-center justify-center text-primary text-xl shadow-sm group-hover:scale-110 transition-transform duration-300">
                                     <FaMapMarkerAlt />
                                 </div>
                                 <div>
@@ -72,7 +72,7 @@ export default function About({ user }: AboutProps) {
 
                     <motion.div
                         variants={fadeIn("left", "tween", 0.2, 1)}
-                        className="bg-gray-50 dark:bg-dark-card p-8 rounded-3xl shadow-xl dark:shadow-none border border-gray-100 dark:border-dark-border relative overflow-hidden group h-full"
+                        className="bg-light-bg dark:bg-dark-card p-8 rounded-3xl shadow-xl dark:shadow-none border border-light-border dark:border-dark-border relative overflow-hidden group h-full"
                     >
                         {/* Decorative bg */}
                         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 dark:bg-primary/5 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-150 duration-500"></div>
@@ -102,3 +102,10 @@ export default function About({ user }: AboutProps) {
         </section>
     );
 }
+
+export default memo(About, (prevProps, nextProps) => {
+    // Only re-render if user stats changed
+    return prevProps.user?.public_repos === nextProps.user?.public_repos &&
+           prevProps.user?.followers === nextProps.user?.followers &&
+           prevProps.user?.following === nextProps.user?.following;
+});

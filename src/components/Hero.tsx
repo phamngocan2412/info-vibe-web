@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useRef, useCallback, memo } from 'react';
 import { FaGithub } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import type { GitHubUser } from '../types';
@@ -12,34 +12,55 @@ interface HeroProps {
     user: GitHubUser | null;
     loading: boolean;
 }
-export default function Hero({ user, loading }: HeroProps) {
+
+function Hero({ user, loading }: HeroProps) {
     const { t } = useTranslation();
-    const ROLES = t('hero.roles', { returnObjects: true }) as string[];
+    
+    // Memoize ROLES to prevent unnecessary effect reruns
+    const ROLES = useMemo(() => 
+        t('hero.roles', { returnObjects: true }) as string[], 
+        [t]
+    );
+    
+    // Use ref to store ROLES for stable reference in effect
+    const rolesRef = useRef(ROLES);
+    rolesRef.current = ROLES;
 
     const [text, setText] = useState('');
     const [roleIndex, setRoleIndex] = useState(0);
     const [isDeleting, setIsDeleting] = useState(false);
     const [imgLoaded, setImgLoaded] = useState(false);
 
-    // Typewriter effect (same as before)
+    const handleImageLoad = useCallback(() => {
+        setImgLoaded(true);
+    }, []);
+
+    // Typewriter effect
     useEffect(() => {
+        const currentRole = rolesRef.current[roleIndex % rolesRef.current.length];
+        
         const handleType = () => {
-            const currentRole = ROLES[roleIndex % ROLES.length];
             if (isDeleting) {
-                setText(currentRole.substring(0, text.length - 1));
+                setText(prev => currentRole.substring(0, prev.length - 1));
             } else {
-                setText(currentRole.substring(0, text.length + 1));
-            }
-            if (!isDeleting && text === currentRole) {
-                setTimeout(() => setIsDeleting(true), 2000);
-            } else if (isDeleting && text === '') {
-                setIsDeleting(false);
-                setRoleIndex((prev) => (prev + 1) % ROLES.length);
+                setText(prev => currentRole.substring(0, prev.length + 1));
             }
         };
+
         const timer = setTimeout(handleType, isDeleting ? 50 : 100);
+
+        // Check for state transitions
+        if (!isDeleting && text === currentRole) {
+            clearTimeout(timer);
+            const pauseTimer = setTimeout(() => setIsDeleting(true), 2000);
+            return () => clearTimeout(pauseTimer);
+        } else if (isDeleting && text === '') {
+            setIsDeleting(false);
+            setRoleIndex(prev => (prev + 1) % rolesRef.current.length);
+        }
+
         return () => clearTimeout(timer);
-    }, [text, isDeleting, roleIndex, ROLES]);
+    }, [text, isDeleting, roleIndex]);
 
     return (
         <section id="home" className="min-h-screen flex items-center pt-20 relative overflow-hidden">
@@ -100,7 +121,9 @@ export default function Hero({ user, loading }: HeroProps) {
                                 src={user?.avatar_url || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"}
                                 alt="Avatar"
                                 className={`w-full h-full object-cover transition-opacity duration-500 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
-                                onLoad={() => setImgLoaded(true)}
+                                onLoad={handleImageLoad}
+                                loading="eager"
+                                decoding="async"
                             />
                         )}
                     </div>
@@ -109,3 +132,12 @@ export default function Hero({ user, loading }: HeroProps) {
         </section>
     );
 }
+
+export default memo(Hero, (prevProps, nextProps) => {
+    return prevProps.loading === nextProps.loading &&
+           prevProps.user?.name === nextProps.user?.name &&
+           prevProps.user?.login === nextProps.user?.login &&
+           prevProps.user?.bio === nextProps.user?.bio &&
+           prevProps.user?.avatar_url === nextProps.user?.avatar_url &&
+           prevProps.user?.html_url === nextProps.user?.html_url;
+});

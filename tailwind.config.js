@@ -11,6 +11,13 @@ export default {
                 sans: ['Inter', 'sans-serif'],
             },
             colors: {
+                light: {
+                    bg: '#ffffff',      // Pure White background (Minimalist)
+                    card: '#ffffff',    // Card: White
+                    border: '#e2e8f0',  // Border: Slate-200 (Clean separation)
+                    text: '#0f172a',    // Text: Slate-900 (High contrast)
+                    muted: '#64748b'    // Muted: Slate-500
+                },
                 dark: {
                     bg: '#0a0a0a',      // Primary background: Deep Black
                     card: '#171717',    // Card background: Lighter Black
