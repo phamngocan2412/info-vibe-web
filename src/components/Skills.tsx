@@ -1,5 +1,6 @@
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { fadeIn, staggerContainer, zoomIn } from '../utils/motion';
 import type { GitHubRepo } from '../types';
 import { SiJavascript, SiTypescript, SiDart, SiCplusplus, SiSwift, SiGo, SiRust, SiKotlin, SiPhp, SiRuby, SiMysql, SiPostgresql, SiMongodb, SiRedis, SiDocker, SiNginx, SiLinux, SiGit, SiHtml5, SiCss3, SiReact } from 'react-icons/si';
@@ -43,6 +44,9 @@ const getSkillIcon = (lang: string) => {
 
 export default function Skills({ repos, loading }: SkillsProps) {
     const { t } = useTranslation();
+    const sectionRef = useRef(null);
+    const isInView = useInView(sectionRef, { once: true, amount: 0.1 });
+
     const getSkills = () => {
         const languages: Record<string, number> = {};
         repos.forEach(repo => {
@@ -56,12 +60,11 @@ export default function Skills({ repos, loading }: SkillsProps) {
     const skills = getSkills();
 
     return (
-        <section id="skills" className="py-20 bg-white dark:bg-transparent transition-colors duration-300">
+        <section ref={sectionRef} id="skills" className="py-20 bg-white dark:bg-transparent transition-colors duration-300">
             <motion.div
                 variants={staggerContainer(0.1, 0.1)}
                 initial="hidden"
-                whileInView="show"
-                viewport={{ once: true }}
+                animate={isInView ? "show" : "hidden"}
                 className="container mx-auto px-6"
             >
                 <div className="text-center mb-16">

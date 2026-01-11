@@ -1,8 +1,9 @@
+import { useRef } from 'react';
 import { FaBookOpen, FaStar, FaCodeBranch, FaCircle, FaArrowRight } from 'react-icons/fa';
 import type { GitHubRepo } from '../types';
 
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { fadeIn, staggerContainer } from '../utils/motion';
 
 interface ProjectsProps {
@@ -28,13 +29,15 @@ const getLangColor = (lang: string | null) => {
 
 export default function Projects({ repos, loading }: ProjectsProps) {
     const { t } = useTranslation();
+    const sectionRef = useRef(null);
+    const isInView = useInView(sectionRef, { once: true, amount: 0.1 });
+
     return (
-        <section id="projects" className="py-20 bg-gray-50 dark:bg-transparent transition-colors duration-300">
+        <section ref={sectionRef} id="projects" className="py-20 bg-gray-50 dark:bg-transparent transition-colors duration-300">
             <motion.div
                 variants={staggerContainer(0.1, 0.1)}
                 initial="hidden"
-                whileInView="show"
-                viewport={{ once: true }}
+                animate={isInView ? "show" : "hidden"}
                 className="container mx-auto px-6"
             >
                 <div className="text-center mb-16">

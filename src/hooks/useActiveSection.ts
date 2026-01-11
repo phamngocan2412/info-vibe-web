@@ -5,13 +5,15 @@ export function useActiveSection(sectionIds: string[]) {
     const observers = useRef<Map<string, number>>(new Map());
 
     useEffect(() => {
+        const currentObservers = observers.current;
+
         const callback = (entries: IntersectionObserverEntry[]) => {
             entries.forEach((entry) => {
                 if (entry.target.id) {
                     if (entry.isIntersecting) {
-                        observers.current.set(entry.target.id, entry.intersectionRatio);
+                        currentObservers.set(entry.target.id, entry.intersectionRatio);
                     } else {
-                        observers.current.delete(entry.target.id);
+                        currentObservers.delete(entry.target.id);
                     }
                 }
             });
@@ -20,7 +22,7 @@ export function useActiveSection(sectionIds: string[]) {
             let maxRatio = 0;
             let bestCandidate = '';
 
-            observers.current.forEach((ratio, id) => {
+            currentObservers.forEach((ratio, id) => {
                 if (ratio > maxRatio) {
                     maxRatio = ratio;
                     bestCandidate = id;
@@ -46,7 +48,7 @@ export function useActiveSection(sectionIds: string[]) {
 
         return () => {
             observer.disconnect();
-            observers.current.clear();
+            currentObservers.clear();
         };
     }, [sectionIds]);
 
