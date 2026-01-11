@@ -1,0 +1,108 @@
+{
+    "nav": {
+        "home": "Trang chủ",
+        "about": "Giới thiệu",
+        "experience": "Kinh nghiệm",
+        "skills": "Kỹ năng",
+        "projects": "Dự án",
+        "contact": "Liên hệ"
+    },
+    "hero": {
+        "greeting": "Xin chào, tôi là",
+        "roles": [
+            "Kỹ sư phần mềm",
+            "Lập trình viên Mobile",
+            "Đam mê công nghệ"
+        ],
+        "contact_me": "Liên hệ ngay",
+        "github_profile": "Xem GitHub",
+        "default_bio": "Lập trình viên đam mê công nghệ."
+    },
+    "about": {
+        "title": "Về bản thân",
+        "contact_info": "Thông tin liên hệ",
+        "location": "Địa điểm",
+        "website": "Website",
+        "stats": {
+            "title": "GitHub Stats",
+            "repos": "Kho lưu trữ",
+            "followers": "Người theo dõi",
+            "following": "Đang theo dõi",
+            "status": "Trạng thái",
+            "open_for_work": "Đang tìm việc"
+        }
+    },
+    "experience": {
+        "title": "Kinh nghiệm làm việc",
+        "items": {
+            "vms": {
+                "role": "Lập trình viên Mobile",
+                "company": "VMS",
+                "period": "Th8 2024 - Th12 2024",
+                "description": [
+                    "Thể hiện sự hiểu biết vững chắc về cấu trúc dự án Flutter và quản lý trạng thái sử dụng kiến trúc BLoC.",
+                    "Tích hợp API và triển khai tính năng quét mã QR để xử lý dữ liệu đầu vào hiệu quả.",
+                    "Sử dụng GitHub Projects để quản lý tác vụ, cộng tác nhóm, theo dõi phân công và giám sát tiến độ.",
+                    "Thiết kế Giao diện người dùng (UI) cho Hệ thống Quản lý Dự án."
+                ]
+            },
+            "aisoft": {
+                "role": "Kiểm thử phần mềm",
+                "company": "AISOFT",
+                "period": "Th4 2024 - Th6 2024",
+                "description": [
+                    "Kiểm thử chức năng: Thực hiện kiểm thử UI và chức năng cho các sản phẩm phần mềm AISOFT.",
+                    "Kiểm thử API: Sử dụng Postman để kiểm thử các API cơ bản và xác thực dữ liệu phản hồi.",
+                    "Cơ sở dữ liệu: Thực hiện các câu lệnh SQL cơ bản để truy xuất dữ liệu và xác minh tính toàn vẹn của dữ liệu.",
+                    "Cộng tác: Làm việc chặt chẽ với các Lập trình viên để tái hiện lỗi và xác minh các bản sửa lỗi."
+                ]
+            },
+            "vlu": {
+                "role": "Trợ giảng (Lập trình)",
+                "company": "Đại học Văn Lang",
+                "period": "Th6 2022 - Th9 2022",
+                "description": [
+                    "Chuẩn bị tài liệu khóa học và hướng dẫn sinh viên dưới sự giám sát của giảng viên.",
+                    "Thiết kế các bài tập thực hành giúp sinh viên có trải nghiệm thực tế với môn học.",
+                    "Chấm bài tập và hoàn tất điểm số cho sinh viên."
+                ]
+            },
+            "iot": {
+                "role": "Lập trình viên Full-stack (Mobile & Backend)",
+                "company": "Dự án cá nhân (IoT Smart Home)",
+                "period": "Đang thực hiện",
+                "description": [
+                    "Kiến trúc và triển khai toàn bộ hệ thống sử dụng nguyên lý Clean Architecture trên cả Flutter (Client) và Golang (Server).",
+                    "Mobile App (Flutter): Tích hợp Tuya Smart SDK để quản lý cấp phép thiết bị, điều khiển và cập nhật trạng thái thời gian thực qua MQTT.",
+                    "Backend (Golang): Phát triển các microservices hiệu suất cao bằng Golang để xử lý logic nghiệp vụ tùy chỉnh mở rộng ngoài khả năng cơ bản của Tuya."
+                ]
+            }
+        }
+    },
+    "skills": {
+        "title": "Kỹ năng chuyên môn",
+        "subtitle": "Công nghệ tôi sử dụng",
+        "no_skills_data": "Chưa có dữ liệu kỹ năng."
+    },
+    "projects": {
+        "title": "Dự án tiêu biểu",
+        "no_projects": "Chưa có dự án công khai nào.",
+        "no_description": "Thông tin mô tả đang được cập nhật.",
+        "view_repo": "Xem Repo",
+        "view_more": "Xem thêm trên GitHub"
+    },
+    "contact": {
+        "title": "Liên hệ",
+        "subtitle": "Hợp tác cùng phát triển",
+        "name": "Họ và tên",
+        "email": "Email",
+        "phone": "Điện thoại",
+        "address": "Địa chỉ",
+        "message": "Nội dung tin nhắn",
+        "send": "Gửi tin nhắn"
+    },
+    "footer": {
+        "copyright": "© 2026 - Đã đăng ký bản quyền",
+        "created_by": "Được tạo bởi"
+    }
+}

@@ -1,0 +1,108 @@
+{
+    "nav": {
+        "home": "Home",
+        "about": "About",
+        "experience": "Experience",
+        "skills": "Skills",
+        "projects": "Projects",
+        "contact": "Contact"
+    },
+    "hero": {
+        "greeting": "Hello, I am",
+        "roles": [
+            "Software Engineer",
+            "Mobile Developer",
+            "Tech Enthusiast"
+        ],
+        "contact_me": "Contact Me",
+        "github_profile": "GitHub Profile",
+        "default_bio": "A passionate developer who loves technology."
+    },
+    "about": {
+        "title": "About Me",
+        "contact_info": "Contact Information",
+        "location": "Location",
+        "website": "Website",
+        "stats": {
+            "title": "GitHub Stats",
+            "repos": "Repositories",
+            "followers": "Followers",
+            "following": "Following",
+            "status": "Status",
+            "open_for_work": "Open for work"
+        }
+    },
+    "experience": {
+        "title": "Work Experience",
+        "items": {
+            "vms": {
+                "role": "Mobile Developer",
+                "company": "VMS",
+                "period": "Aug 2024 - Dec 2024",
+                "description": [
+                    "Demonstrated solid understanding of Flutter project structure and state management using BLoC architecture.",
+                    "Integrated APIs and implemented a QR code scanner feature for efficient data input processing.",
+                    "Utilized GitHub Projects for task management, team collaboration, assignment tracking, and progress monitoring.",
+                    "Designed the User Interface (UI) for the Project Management System."
+                ]
+            },
+            "aisoft": {
+                "role": "Software Tester",
+                "company": "AISOFT",
+                "period": "Apr 2024 - Jun 2024",
+                "description": [
+                    "Functional Testing: Conducted UI and functional testing for AISOFT software products.",
+                    "API Testing: Utilized Postman to test basic APIs and validate response data.",
+                    "Database: Executed basic SQL queries to retrieve data and verify data integrity.",
+                    "Collaboration: Worked closely with Developers to reproduce bugs and verify bug fixes."
+                ]
+            },
+            "vlu": {
+                "role": "Teaching Assistant (Programming)",
+                "company": "Van Lang University",
+                "period": "Jun 2022 - Sep 2022",
+                "description": [
+                    "Prepared course materials and instructed students under the supervision of the lecturer.",
+                    "Designed practical exercises to help students gain hands-on experience with the subject matter.",
+                    "Graded assignments and finalized student scores."
+                ]
+            },
+            "iot": {
+                "role": "Full-stack Developer (Mobile & Backend)",
+                "company": "Personal Project (IoT Smart Home)",
+                "period": "Ongoing",
+                "description": [
+                    "Architected and implemented the entire system using Clean Architecture principles on both Flutter (Client) and Golang (Server).",
+                    "Mobile App (Flutter): Integrated Tuya Smart SDK to manage device provisioning, control, and real-time status updates via MQTT.",
+                    "Backend (Golang): Developed high-performance microservices in Golang to handle custom business logic extending beyond Tuya's basic capabilities."
+                ]
+            }
+        }
+    },
+    "skills": {
+        "title": "Skills",
+        "subtitle": "Technologies I use",
+        "no_skills_data": "No skills data available."
+    },
+    "projects": {
+        "title": "Projects",
+        "no_projects": "No public projects found.",
+        "no_description": "No description available for this project.",
+        "view_repo": "View Repo",
+        "view_more": "View More on GitHub"
+    },
+    "contact": {
+        "title": "Contact Me",
+        "subtitle": "Let's work together",
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "address": "Address",
+        "message": "Message",
+        "send": "Send Message"
+    },
+    "footer": {
+        "copyright": "© 2026 - All rights reserved.",
+        "created_by": "Created by"
+    }
+}
