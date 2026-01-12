@@ -52,12 +52,12 @@ export function useActiveSection(sectionIds: string[]) {
         };
     }, [sectionIds]);
 
-    // Removed useEffect that updates hash in URL
-    // useEffect(() => {
-    //     if (activeSection) {
-    //         window.history.replaceState(null, '', `#${activeSection}`);
-    //     }
-    // }, [activeSection]);
+
+    useEffect(() => {
+        if (activeSection) {
+            window.history.replaceState(null, '', `${activeSection}`);
+        }
+    }, [activeSection]);
 
     return activeSection;
 }
