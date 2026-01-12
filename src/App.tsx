@@ -55,15 +55,15 @@ function MainContent() {
 
 function App() {
   return (
-    <div className="bg-light-bg text-light-text dark:bg-dark-bg dark:text-dark-text font-sans antialiased transition-colors duration-300 relative min-h-screen">
+    <div className="bg-light-bg text-light-text dark:bg-dark-bg dark:text-dark-text font-sans antialiased transition-colors duration-300 relative min-h-screen overflow-x-hidden w-full">
       <ScrollHandler />
       {/* Unified Background: Floating Shapes for both Light and Dark modes */}
       <FloatingShapesBackground
         className="fixed inset-0 z-0 pointer-events-none"
       />
 
+      <Header />
       <div className="relative z-10">
-        <Header />
 
         {/* We use Routes but render the same MainContent for all valid sections to preserve the Single Page feel */}
         <Routes>

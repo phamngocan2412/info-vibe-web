@@ -69,42 +69,7 @@ function Hero({ user, loading }: HeroProps) {
             <div className="absolute top-0 -right-4 w-72 h-72 bg-emerald-500/30 dark:bg-emerald-900/20 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
             <div className="absolute -bottom-8 left-20 w-72 h-72 bg-purple-500/30 dark:bg-purple-900/20 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
 
-            <div className="container mx-auto px-6 flex flex-col-reverse md:flex-row items-center relative z-10">
-                <motion.div
-                    variants={fadeIn("right", "tween", 0.2, 1)}
-                    initial="hidden"
-                    whileInView="show"
-                    viewport={{ once: true }}
-                    className="md:w-1/2 mt-10 md:mt-0 text-center md:text-left"
-                >
-                    <p className="text-primary font-bold mb-2 tracking-wide uppercase">{t('hero.greeting')}</p>
-                    <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 dark:text-white mb-4 leading-tight">
-                        <span className="text-gradient">
-                            {loading ? 'Loading...' : (user?.name || user?.login || 'Developer')}
-                        </span>
-                    </h1>
-                    <h2 className="text-2xl md:text-3xl text-gray-600 dark:text-dark-muted mb-6 font-light h-10 flex items-center justify-center md:justify-start gap-1">
-                        <span>{text}</span>
-                        <span className="animate-pulse text-primary">|</span>
-                    </h2>
-                    <p className="text-gray-600 dark:text-dark-muted mb-8 text-lg leading-relaxed max-w-lg mx-auto md:mx-0">
-                        {loading ? '...' : (user?.bio || t('hero.default_bio'))}
-                    </p>
-                    <motion.div
-                        variants={fadeIn("up", "tween", 0.4, 1)}
-                        className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start"
-                    >
-                        <a href="#contact" className="px-8 py-3 bg-primary hover:bg-blue-600 text-white rounded-full font-bold transition-all shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-1">
-                            {t('hero.contact_me')}
-                        </a>
-                        {user && (
-                            <a href={user.html_url} target="_blank" rel="noopener noreferrer" className="px-8 py-3 border border-gray-300 dark:border-dark-border text-gray-700 dark:text-white bg-transparent hover:border-primary hover:text-primary dark:hover:border-primary dark:hover:text-primary transition-all flex items-center justify-center gap-2 hover:-translate-y-1 rounded-full font-bold">
-                                <FaGithub /> <span>{t('hero.github_profile')}</span>
-                            </a>
-                        )}
-                    </motion.div>
-                </motion.div>
-
+            <div className="container mx-auto px-6 flex flex-col md:flex-row-reverse items-center relative z-10">
                 <motion.div
                     variants={zoomIn(0.2, 1)}
                     initial="hidden"
@@ -154,6 +119,41 @@ function Hero({ user, loading }: HeroProps) {
                             />
                         )}
                     </div>
+                </motion.div>
+
+                <motion.div
+                    variants={fadeIn("right", "tween", 0.2, 1)}
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true }}
+                    className="md:w-1/2 mt-10 md:mt-0 text-center md:text-left"
+                >
+                    <p className="text-primary font-bold mb-2 tracking-wide uppercase">{t('hero.greeting')}</p>
+                    <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 dark:text-white mb-4 leading-tight">
+                        <span className="text-gradient">
+                            {loading ? 'Loading...' : (user?.name || user?.login || 'Developer')}
+                        </span>
+                    </h1>
+                    <h2 className="text-2xl md:text-3xl text-gray-600 dark:text-dark-muted mb-6 font-light h-10 flex items-center justify-center md:justify-start gap-1">
+                        <span>{text}</span>
+                        <span className="animate-pulse text-primary">|</span>
+                    </h2>
+                    <p className="text-gray-600 dark:text-dark-muted mb-8 text-lg leading-relaxed max-w-lg mx-auto md:mx-0">
+                        {loading ? '...' : (user?.bio || t('hero.default_bio'))}
+                    </p>
+                    <motion.div
+                        variants={fadeIn("up", "tween", 0.4, 1)}
+                        className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start"
+                    >
+                        <a href="#contact" className="px-8 py-3 bg-primary hover:bg-blue-600 text-white rounded-full font-bold transition-all shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-1">
+                            {t('hero.contact_me')}
+                        </a>
+                        {user && (
+                            <a href={user.html_url} target="_blank" rel="noopener noreferrer" className="px-8 py-3 border border-gray-300 dark:border-dark-border text-gray-700 dark:text-white bg-transparent hover:border-primary hover:text-primary dark:hover:border-primary dark:hover:text-primary transition-all flex items-center justify-center gap-2 hover:-translate-y-1 rounded-full font-bold">
+                                <FaGithub /> <span>{t('hero.github_profile')}</span>
+                            </a>
+                        )}
+                    </motion.div>
                 </motion.div>
             </div>
         </section>
