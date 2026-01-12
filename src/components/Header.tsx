@@ -35,6 +35,7 @@ function Header() {
                     onClick={(e) => {
                         e.preventDefault();
                         navigate('/');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
                     className="text-2xl font-bold dark:text-white tracking-tighter hover:scale-105 transition-transform flex items-center gap-2" id="nav-logo">
                     <img src="/logo.png" alt="Logo" className="w-8 h-8 rounded-full" loading="lazy" />
@@ -48,6 +49,7 @@ function Header() {
                             key={item}
                             onClick={() => {
                                 navigate(item === 'home' ? '/' : `/${item}`);
+                                if (item === 'home') window.scrollTo({ top: 0, behavior: 'smooth' });
                             }}
                             className={`relative px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${activeSection === item
                                 ? 'text-primary'
@@ -110,6 +112,7 @@ function Header() {
                                     }`}
                                 onClick={() => {
                                     navigate(item === 'home' ? '/' : `/${item}`);
+                                    if (item === 'home') window.scrollTo({ top: 0, behavior: 'smooth' });
                                     closeMobileMenu();
                                 }}
                             >

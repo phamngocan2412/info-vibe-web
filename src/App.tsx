@@ -20,13 +20,17 @@ function ScrollHandler() {
   const { pathname } = useLocation();
 
   useEffect(() => {
+    // Priority handling for Home/Root
+    if (pathname === '/' || pathname === '/home') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     // Scroll to section based on path (e.g. /projects -> #projects)
     const sectionId = pathname.replace('/', '');
-    const element = document.getElementById(sectionId || 'home');
+    const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
-    } else if (pathname === '/') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [pathname]);
 
