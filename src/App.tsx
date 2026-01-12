@@ -5,6 +5,7 @@ import Skills from './components/Skills';
 import Projects from './components/Projects';
 import { Contact, Footer } from './components/Footer';
 import Experience from './components/Experience';
+import NotFound from './components/NotFound';
 import { useGitHubData } from './hooks/useGitHubData';
 
 
@@ -68,6 +69,7 @@ function App() {
           <Route path="/experience" element={<MainContent />} />
           <Route path="/skills" element={<MainContent />} />
           <Route path="/projects" element={<MainContent />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
 
         <Footer />
