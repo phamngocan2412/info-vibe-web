@@ -6,7 +6,7 @@ import type { GitHubUser } from '../types';
 import { motion } from 'framer-motion';
 import { fadeIn, zoomIn } from '../utils/motion';
 
-import loadingGif from '../assets/load-profile.gif';
+// import loadingGif from '../assets/load-profile.gif';
 
 interface HeroProps {
     user: GitHubUser | null;
@@ -15,13 +15,13 @@ interface HeroProps {
 
 function Hero({ user, loading }: HeroProps) {
     const { t } = useTranslation();
-    
+
     // Memoize ROLES to prevent unnecessary effect reruns
-    const ROLES = useMemo(() => 
-        t('hero.roles', { returnObjects: true }) as string[], 
+    const ROLES = useMemo(() =>
+        t('hero.roles', { returnObjects: true }) as string[],
         [t]
     );
-    
+
     // Use ref to store ROLES for stable reference in effect
     const rolesRef = useRef(ROLES);
     rolesRef.current = ROLES;
@@ -38,7 +38,7 @@ function Hero({ user, loading }: HeroProps) {
     // Typewriter effect
     useEffect(() => {
         const currentRole = rolesRef.current[roleIndex % rolesRef.current.length];
-        
+
         const handleType = () => {
             if (isDeleting) {
                 setText(prev => currentRole.substring(0, prev.length - 1));
@@ -114,7 +114,9 @@ function Hero({ user, loading }: HeroProps) {
                 >
                     <div className="w-64 h-64 md:w-96 md:h-96 rounded-full border-4 border-white dark:border-dark-border shadow-2xl dark:shadow-blue-900/20 overflow-hidden relative z-10 bg-gray-200 dark:bg-dark-card flex items-center justify-center animate-float">
                         {(!imgLoaded || loading) && (
-                            <img src={loadingGif} alt="Loading..." className="absolute inset-0 w-full h-full object-cover z-20" />
+                            <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-dark-card z-20">
+                                <div className="w-16 h-16 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+                            </div>
                         )}
                         {!loading && (
                             <img
@@ -135,9 +137,9 @@ function Hero({ user, loading }: HeroProps) {
 
 export default memo(Hero, (prevProps, nextProps) => {
     return prevProps.loading === nextProps.loading &&
-           prevProps.user?.name === nextProps.user?.name &&
-           prevProps.user?.login === nextProps.user?.login &&
-           prevProps.user?.bio === nextProps.user?.bio &&
-           prevProps.user?.avatar_url === nextProps.user?.avatar_url &&
-           prevProps.user?.html_url === nextProps.user?.html_url;
+        prevProps.user?.name === nextProps.user?.name &&
+        prevProps.user?.login === nextProps.user?.login &&
+        prevProps.user?.bio === nextProps.user?.bio &&
+        prevProps.user?.avatar_url === nextProps.user?.avatar_url &&
+        prevProps.user?.html_url === nextProps.user?.html_url;
 });
