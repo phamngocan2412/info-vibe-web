@@ -101,6 +101,11 @@
         "message": "Message",
         "send": "Send Message"
     },
+    "not_found": {
+        "title": "Page Not Found",
+        "desc": "The page you are looking for doesn't exist or has been moved.",
+        "back_home": "Back to Home"
+    },
     "footer": {
         "copyright": "© 2026 - All rights reserved.",
         "created_by": "Created by"

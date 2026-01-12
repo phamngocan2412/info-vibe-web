@@ -101,6 +101,11 @@
         "message": "Nội dung tin nhắn",
         "send": "Gửi tin nhắn"
     },
+    "not_found": {
+        "title": "Không tìm thấy trang",
+        "desc": "Trang bạn đang tìm kiếm không tồn tại hoặc đã bị di chuyển.",
+        "back_home": "Về trang chủ"
+    },
     "footer": {
         "copyright": "© 2026 - Đã đăng ký bản quyền",
         "created_by": "Được tạo bởi"
