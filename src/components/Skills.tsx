@@ -1,53 +1,22 @@
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, useInView } from 'framer-motion';
 import { fadeIn, staggerContainer, zoomIn } from '../utils/motion';
+import { getSkillIcon } from '../utils/skillIcons';
 import type { GitHubRepo } from '../types';
-import { SiJavascript, SiTypescript, SiDart, SiCplusplus, SiSwift, SiGo, SiRust, SiKotlin, SiPhp, SiRuby, SiMysql, SiPostgresql, SiMongodb, SiRedis, SiDocker, SiNginx, SiLinux, SiGit, SiHtml5, SiCss3, SiReact } from 'react-icons/si';
-import { FaJava, FaPython, FaNodeJs } from 'react-icons/fa';
 
 interface SkillsProps {
     repos: GitHubRepo[];
     loading?: boolean;
 }
 
-const getSkillIcon = (lang: string) => {
-    const iconProps = { className: "text-lg mr-2" };
-    switch (lang.toLowerCase()) {
-        case 'javascript': return <SiJavascript {...iconProps} className="text-lg mr-2 text-yellow-400" />;
-        case 'typescript': return <SiTypescript {...iconProps} className="text-lg mr-2 text-blue-500" />;
-        case 'python': return <FaPython {...iconProps} className="text-lg mr-2 text-blue-400" />;
-        case 'dart': return <SiDart {...iconProps} className="text-lg mr-2 text-blue-400" />;
-        case 'java': return <FaJava {...iconProps} className="text-lg mr-2 text-red-500" />;
-        case 'html': return <SiHtml5 {...iconProps} className="text-lg mr-2 text-orange-500" />;
-        case 'css': return <SiCss3 {...iconProps} className="text-lg mr-2 text-blue-500" />;
-        case 'c++': return <SiCplusplus {...iconProps} className="text-lg mr-2 text-blue-600" />;
-        case 'swift': return <SiSwift {...iconProps} className="text-lg mr-2 text-orange-500" />;
-        case 'go': return <SiGo {...iconProps} className="text-lg mr-2 text-cyan-500" />;
-        case 'rust': return <SiRust {...iconProps} className="text-lg mr-2 text-orange-600" />;
-        case 'kotlin': return <SiKotlin {...iconProps} className="text-lg mr-2 text-purple-500" />;
-        case 'php': return <SiPhp {...iconProps} className="text-lg mr-2 text-indigo-500" />;
-        case 'ruby': return <SiRuby {...iconProps} className="text-lg mr-2 text-red-600" />;
-        case 'mysql': return <SiMysql {...iconProps} className="text-lg mr-2 text-blue-500" />;
-        case 'postgresql': return <SiPostgresql {...iconProps} className="text-lg mr-2 text-blue-400" />;
-        case 'mongodb': return <SiMongodb {...iconProps} className="text-lg mr-2 text-green-500" />;
-        case 'redis': return <SiRedis {...iconProps} className="text-lg mr-2 text-red-500" />;
-        case 'docker': return <SiDocker {...iconProps} className="text-lg mr-2 text-blue-500" />;
-        case 'nginx': return <SiNginx {...iconProps} className="text-lg mr-2 text-green-600" />;
-        case 'linux': return <SiLinux {...iconProps} className="text-lg mr-2" />;
-        case 'git': return <SiGit {...iconProps} className="text-lg mr-2 text-orange-500" />;
-        case 'react': return <SiReact {...iconProps} className="text-lg mr-2 text-cyan-400" />;
-        case 'nodejs': return <FaNodeJs {...iconProps} className="text-lg mr-2 text-green-500" />;
-        default: return null;
-    }
-};
-
 export default function Skills({ repos, loading }: SkillsProps) {
     const { t } = useTranslation();
     const sectionRef = useRef(null);
     const isInView = useInView(sectionRef, { once: true, amount: 0.1 });
 
-    const getSkills = () => {
+    const skills = useMemo(() => {
+        if (!repos) return [];
         const languages: Record<string, number> = {};
         repos.forEach(repo => {
             if (repo.language) {
@@ -55,9 +24,7 @@ export default function Skills({ repos, loading }: SkillsProps) {
             }
         });
         return Object.keys(languages).sort((a, b) => languages[b] - languages[a]);
-    };
-
-    const skills = getSkills();
+    }, [repos]);
 
     return (
         <section ref={sectionRef} id="skills" className="py-20 bg-light-card dark:bg-transparent transition-colors duration-300">

@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { GitHubUser, GitHubRepo } from '../types';
 import { mockUser, mockRepos } from '../data/mock';
-
-const GITHUB_USERNAME = 'phamngocan2412';
+import { GITHUB_USERNAME, CACHE_KEY, CACHE_DURATION } from '../constants';
 
 export function useGitHubData() {
     const [user, setUser] = useState<GitHubUser | null>(null);
@@ -12,9 +11,6 @@ export function useGitHubData() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const CACHE_KEY = 'github_data_cache_v2'; // Versioned to invalidate old bad cache
-            const CACHE_DURATION = 3600000; // 1 hour
-
             const cached = localStorage.getItem(CACHE_KEY);
             if (cached) {
                 try {
@@ -46,11 +42,15 @@ export function useGitHubData() {
                 const reposData = await reposRes.json();
                 setRepos(reposData);
 
-                localStorage.setItem(CACHE_KEY, JSON.stringify({
-                    user: userData,
-                    repos: reposData,
-                    timestamp: Date.now()
-                }));
+                try {
+                    localStorage.setItem(CACHE_KEY, JSON.stringify({
+                        user: userData,
+                        repos: reposData,
+                        timestamp: Date.now()
+                    }));
+                } catch (storageErr) {
+                    console.warn("Failed to save to localStorage (likely quota exceeded):", storageErr);
+                }
 
             } catch (err: unknown) {
                 console.warn("GitHub API failed, using mock data:", err);
