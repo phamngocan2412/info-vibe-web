@@ -13,6 +13,7 @@ Next: Create Dockerfile and Nginx configuration.
 ## Decisions
 - **Deployment Strategy**: Use Dockerfile with Nginx for serving static files. This ensures robust SPA routing and high performance.
 - **Nginx Config**: specific configuration to handle client-side routing (redirect 404 to index.html).
+- **Clean URL**: Removed hash fragments (#) from URL logic. Replaced anchor tags with buttons and `scrollIntoView` for smooth navigation without modifying the browser URL.
 
 ## Progress
 - [x] Analyze project structure.

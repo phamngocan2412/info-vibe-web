@@ -36,12 +36,16 @@ function Header() {
                 {/* Desktop Menu - Switch to lg to prevent overlap on tablets */}
                 <nav className="hidden lg:flex space-x-1 xl:space-x-2">
                     {NAV_ITEMS.map((item) => (
-                        <a
+                        <button
                             key={item}
-                            href={`#${item}`}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                const element = document.getElementById(item);
+                                element?.scrollIntoView({ behavior: 'smooth' });
+                            }}
                             className={`relative px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${activeSection === item
-                                    ? 'text-primary'
-                                    : 'text-gray-600 dark:text-gray-300'
+                                ? 'text-primary'
+                                : 'text-gray-600 dark:text-gray-300'
                                 }`}
                         >
                             {activeSection === item && (
@@ -56,7 +60,7 @@ function Header() {
                                 />
                             )}
                             {t(`nav.${item}`)}
-                        </a>
+                        </button>
                     ))}
                 </nav>
 
@@ -92,17 +96,21 @@ function Header() {
                 <div className="lg:hidden bg-light-card dark:bg-dark-bg border-b border-light-border dark:border-dark-border">
                     <nav className="flex flex-col p-4 space-y-4">
                         {NAV_ITEMS.map((item) => (
-                            <a
+                            <button
                                 key={item}
-                                href={`#${item}`}
-                                className={`text-sm font-medium transition-colors hover:text-primary ${activeSection === item
-                                        ? 'text-primary'
-                                        : 'text-gray-600 dark:text-gray-300'
+                                className={`text-left text-sm font-medium transition-colors hover:text-primary ${activeSection === item
+                                    ? 'text-primary'
+                                    : 'text-gray-600 dark:text-gray-300'
                                     }`}
-                                onClick={closeMobileMenu}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    const element = document.getElementById(item);
+                                    element?.scrollIntoView({ behavior: 'smooth' });
+                                    closeMobileMenu();
+                                }}
                             >
                                 {t(`nav.${item}`)}
-                            </a>
+                            </button>
                         ))}
                     </nav>
                 </div>
