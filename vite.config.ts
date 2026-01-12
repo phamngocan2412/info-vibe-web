@@ -22,4 +22,7 @@ export default defineConfig({
     },
     chunkSizeWarningLimit: 1000,
   },
+  preview: {
+    allowedHosts: true, // Allow all hosts for preview/Coolify usage
+  },
 })

@@ -55,7 +55,8 @@ export function useActiveSection(sectionIds: string[]) {
 
     useEffect(() => {
         if (activeSection) {
-            window.history.replaceState(null, '', `${activeSection}`);
+            const path = activeSection === 'home' ? '/' : `/${activeSection}`;
+            window.history.replaceState(null, '', path);
         }
     }, [activeSection]);
 
