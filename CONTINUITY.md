@@ -19,4 +19,5 @@ Next: Create Dockerfile and Nginx configuration.
 - [x] Analyze project structure.
 - [x] Create Dockerfile.
 - [x] Create nginx.conf.
+- [x] Implement React Router (react-router-dom) for clean clean URLs (/projects).
 - [x] Guide user on Coolify setup and DNS.

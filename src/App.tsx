@@ -11,11 +11,47 @@ import { useGitHubData } from './hooks/useGitHubData';
 
 import { FloatingShapesBackground } from '@/components/animate-ui/components/backgrounds/floating-shapes';
 
-function App() {
+
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+
+function ScrollHandler() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    // Scroll to section based on path (e.g. /projects -> #projects)
+    const sectionId = pathname.replace('/', '');
+    const element = document.getElementById(sectionId || 'home');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    } else if (pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [pathname]);
+
+  return null;
+}
+
+function MainContent() {
   const { user, repos, loading } = useGitHubData();
 
   return (
+    <main>
+      <Hero user={user} loading={loading} />
+      <About user={user} />
+      <Experience />
+
+      <Skills repos={repos} loading={loading} />
+      <Projects repos={repos} loading={loading} />
+      <Contact />
+    </main>
+  );
+}
+
+function App() {
+  return (
     <div className="bg-light-bg text-light-text dark:bg-dark-bg dark:text-dark-text font-sans antialiased transition-colors duration-300 relative min-h-screen">
+      <ScrollHandler />
       {/* Unified Background: Floating Shapes for both Light and Dark modes */}
       <FloatingShapesBackground
         className="fixed inset-0 z-0 pointer-events-none"
@@ -23,15 +59,17 @@ function App() {
 
       <div className="relative z-10">
         <Header />
-        <main>
-          <Hero user={user} loading={loading} />
-          <About user={user} />
-          <Experience />
 
-          <Skills repos={repos} loading={loading} />
-          <Projects repos={repos} loading={loading} />
-          <Contact />
-        </main>
+        {/* We use Routes but render the same MainContent for all valid sections to preserve the Single Page feel */}
+        <Routes>
+          <Route path="/" element={<MainContent />} />
+          <Route path="/home" element={<MainContent />} />
+          <Route path="/about" element={<MainContent />} />
+          <Route path="/experience" element={<MainContent />} />
+          <Route path="/skills" element={<MainContent />} />
+          <Route path="/projects" element={<MainContent />} />
+        </Routes>
+
         <Footer />
       </div>
     </div>

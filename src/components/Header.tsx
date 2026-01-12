@@ -4,6 +4,7 @@ import { FaMoon, FaSun, FaBars } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { useActiveSection } from '../hooks/useActiveSection';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const NAV_ITEMS = ['home', 'about', 'experience', 'skills', 'projects'] as const;
 
@@ -12,6 +13,7 @@ function Header() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { t, i18n } = useTranslation();
     const activeSection = useActiveSection(['home', 'about', 'experience', 'skills', 'projects']);
+    const navigate = useNavigate();
 
     const toggleLang = useCallback(() => {
         i18n.changeLanguage(i18n.language === 'vi' ? 'en' : 'vi');
@@ -28,7 +30,13 @@ function Header() {
     return (
         <header className="fixed top-0 w-full z-50 bg-light-card/80 dark:bg-dark-bg/80 backdrop-blur-md border-b border-light-border dark:border-dark-border transition-colors duration-300">
             <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-                <a href="#" className="text-2xl font-bold dark:text-white tracking-tighter hover:scale-105 transition-transform flex items-center gap-2" id="nav-logo">
+                <a
+                    href="#"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        navigate('/');
+                    }}
+                    className="text-2xl font-bold dark:text-white tracking-tighter hover:scale-105 transition-transform flex items-center gap-2" id="nav-logo">
                     <img src="/logo.png" alt="Logo" className="w-8 h-8 rounded-full" loading="lazy" />
                     <span>&lt;ANRO<span className="text-primary">/</span>&gt;</span>
                 </a>
@@ -38,10 +46,8 @@ function Header() {
                     {NAV_ITEMS.map((item) => (
                         <button
                             key={item}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                const element = document.getElementById(item);
-                                element?.scrollIntoView({ behavior: 'smooth' });
+                            onClick={() => {
+                                navigate(item === 'home' ? '/' : `/${item}`);
                             }}
                             className={`relative px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${activeSection === item
                                 ? 'text-primary'
@@ -102,10 +108,8 @@ function Header() {
                                     ? 'text-primary'
                                     : 'text-gray-600 dark:text-gray-300'
                                     }`}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    const element = document.getElementById(item);
-                                    element?.scrollIntoView({ behavior: 'smooth' });
+                                onClick={() => {
+                                    navigate(item === 'home' ? '/' : `/${item}`);
                                     closeMobileMenu();
                                 }}
                             >
