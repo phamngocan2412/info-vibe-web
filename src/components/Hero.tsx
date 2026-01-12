@@ -115,7 +115,32 @@ function Hero({ user, loading }: HeroProps) {
                     <div className="w-64 h-64 md:w-96 md:h-96 rounded-full border-4 border-white dark:border-dark-border shadow-2xl dark:shadow-blue-900/20 overflow-hidden relative z-10 bg-gray-200 dark:bg-dark-card flex items-center justify-center animate-float">
                         {(!imgLoaded || loading) && (
                             <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-dark-card z-20">
-                                <div className="w-16 h-16 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+                                <motion.div
+                                    className="relative flex items-center justify-center w-24 h-24"
+                                >
+                                    <motion.span
+                                        className="absolute w-full h-full border-4 border-primary/30 rounded-full"
+                                        animate={{
+                                            scale: [1, 1.2, 1],
+                                            opacity: [1, 0, 1],
+                                        }}
+                                        transition={{
+                                            duration: 2,
+                                            repeat: Infinity,
+                                            ease: "easeInOut",
+                                        }}
+                                    />
+                                    <motion.span
+                                        className="absolute w-full h-full border-4 border-t-primary rounded-full"
+                                        animate={{ rotate: 360 }}
+                                        transition={{
+                                            duration: 1.5,
+                                            repeat: Infinity,
+                                            ease: "linear",
+                                        }}
+                                    />
+                                    <div className="text-primary text-xs font-bold tracking-widest animate-pulse">DEV</div>
+                                </motion.div>
                             </div>
                         )}
                         {!loading && (
