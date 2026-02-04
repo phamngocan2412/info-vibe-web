@@ -18,6 +18,7 @@ export default function CVManager() {
     const [file, setFile] = useState<File | null>(null);
     const [loading, setLoading] = useState(true);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null); // For PDF Preview
+    const [errorMsg, setErrorMsg] = useState<string | null>(null); // UI Error State
 
     // Fetch Real Data from Database
     const fetchCVs = async () => {
@@ -49,8 +50,20 @@ export default function CVManager() {
     };
 
     const uploadAndAddCV = async () => {
+        setErrorMsg(null);
         if (!newCV.label || !file) {
-            alert("Please provide a label and select a file.");
+            setErrorMsg("Please provide a label and select a file.");
+            return;
+        }
+
+        // Validate File
+        const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+        if (file.size > MAX_SIZE) {
+            setErrorMsg("File size must be less than 5MB.");
+            return;
+        }
+        if (file.type !== 'application/pdf') {
+            setErrorMsg("Only PDF files are allowed.");
             return;
         }
 
@@ -106,7 +119,7 @@ export default function CVManager() {
 
         } catch (error: any) {
             console.error('Error:', error);
-            alert(`Error: ${error.message}`);
+            setErrorMsg(error.message || 'Upload failed. Please try again.');
             // Revert optimistic update on failure
             setCvs(prev => prev.filter(cv => !cv.id.startsWith('temp-')));
         } finally {
@@ -116,6 +129,7 @@ export default function CVManager() {
 
     const deleteCV = async (id: string) => {
         if (!confirm("Are you sure? This will delete the record.")) return;
+        setErrorMsg(null);
 
         // Optimistic Delete
         const previousCvs = [...cvs];
@@ -129,12 +143,13 @@ export default function CVManager() {
 
             if (error) throw error;
         } catch (error: any) {
-            alert(error.message);
+            setErrorMsg(`Delete failed: ${error.message}`);
             setCvs(previousCvs); // Revert
         }
     };
 
     const makeDefault = async (id: string) => {
+        setErrorMsg(null);
         // Optimistic Update
         const previousCvs = JSON.parse(JSON.stringify(cvs));
         setCvs(prev => prev.map(c => ({
@@ -151,7 +166,7 @@ export default function CVManager() {
 
             if (error) throw error;
         } catch (error: any) {
-            alert(error.message);
+            setErrorMsg(`Update failed: ${error.message}`);
             setCvs(previousCvs); // Revert
         }
     };
@@ -168,13 +183,20 @@ export default function CVManager() {
                     <p className="mt-1">Changes made here update the Home page immediately. No build/deploy required.</p>
                 </div>
 
+                {errorMsg && (
+                    <div className="bg-red-100 dark:bg-red-900/30 p-4 rounded-lg mb-8 border border-red-200 dark:border-red-700 text-sm text-red-700 dark:text-red-200 flex justify-between items-center animate-pulse">
+                        <span>{errorMsg}</span>
+                        <button onClick={() => setErrorMsg(null)}><FaTimes /></button>
+                    </div>
+                )}
+
                 {/* Add New */}
                 <div className="bg-light-card dark:bg-dark-card p-6 rounded-xl border border-light-border dark:border-dark-border mb-8 shadow-sm">
                     <h2 className="text-xl font-bold mb-4">Upload New CV</h2>
                     <div className="grid md:grid-cols-3 gap-4">
                         <div className="col-span-1">
-                             <label className="block text-sm font-medium mb-1">Label</label>
-                             <input
+                            <label className="block text-sm font-medium mb-1">Label</label>
+                            <input
                                 type="text"
                                 placeholder="e.g. Senior Go Dev"
                                 className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent"
@@ -182,20 +204,33 @@ export default function CVManager() {
                                 onChange={e => setNewCV({ ...newCV, label: e.target.value })}
                             />
                         </div>
-                        <div className="col-span-2 flex flex-col">
+                        <div className="col-span-2 flex flex-col min-w-0">
                             <label className="block text-sm font-medium mb-1">PDF File</label>
-                            <div className="flex gap-2">
-                                <input
-                                    id="cv-file-input"
-                                    type="file"
-                                    accept=".pdf"
-                                    className="flex-1 p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
-                                    onChange={handleFileChange}
-                                />
+                            <div className="flex gap-2 items-center min-w-0">
+                                <div className="flex-1 min-w-0 relative">
+                                    <label
+                                        htmlFor="cv-file-input"
+                                        className="flex items-center gap-2 w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors min-w-0"
+                                    >
+                                        <div className="bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-bold shrink-0">
+                                            Browse...
+                                        </div>
+                                        <span className={`flex-1 truncate text-sm ${file ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-400'}`} title={file?.name || "Choose PDF file"}>
+                                            {file ? file.name : "Choose PDF file..."}
+                                        </span>
+                                    </label>
+                                    <input
+                                        id="cv-file-input"
+                                        type="file"
+                                        accept=".pdf"
+                                        className="hidden"
+                                        onChange={handleFileChange}
+                                    />
+                                </div>
                                 <button
                                     onClick={uploadAndAddCV}
                                     disabled={uploading}
-                                    className="px-6 py-2 bg-primary text-white rounded-lg font-bold hover:bg-blue-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed min-w-[120px]"
+                                    className="px-6 py-2 bg-primary text-white rounded-lg font-bold hover:bg-blue-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shrink-0 min-w-[120px]"
                                 >
                                     {uploading ? <FaSpinner className="animate-spin" /> : <><FaFileUpload /> Upload</>}
                                 </button>
@@ -211,23 +246,23 @@ export default function CVManager() {
                             <FaSpinner className="animate-spin text-4xl text-primary" />
                         </div>
                     ) : cvs.map(cv => (
-                        <div key={cv.id} className={`flex items-center justify-between p-5 rounded-xl border ${cv.is_default ? 'border-primary bg-primary/5' : 'border-light-border dark:border-dark-border bg-light-card dark:bg-dark-card'} transition-all duration-300 hover:shadow-md`}>
-                            <div className="flex items-center gap-4">
-                                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${cv.is_default ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-800 text-gray-400'}`}>
+                        <div key={cv.id} className={`flex items-center justify-between p-5 rounded-xl border ${cv.is_default ? 'border-primary bg-primary/5' : 'border-light-border dark:border-dark-border bg-light-card dark:bg-dark-card'} min-w-0 gap-4`}>
+                            <div className="flex items-center gap-4 min-w-0 flex-1">
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${cv.is_default ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-800 text-gray-400'}`}>
                                     <FaStar />
                                 </div>
-                                <div>
-                                    <h3 className="font-bold text-lg flex items-center gap-2">
-                                        {cv.label}
-                                        {cv.is_default && <span className="text-xs bg-primary text-white px-2 py-0.5 rounded-full">Default</span>}
+                                <div className="min-w-0 flex-1">
+                                    <h3 className="font-bold text-lg flex items-center gap-2 truncate" title={cv.label}>
+                                        <span className="truncate">{cv.label}</span>
+                                        {cv.is_default && <span className="text-xs bg-primary text-white px-2 py-0.5 rounded-full shrink-0">Default</span>}
                                     </h3>
-                                    <p className="text-sm text-gray-500 font-mono flex items-center gap-2">
-                                        <span className="text-green-600 text-xs border border-green-200 bg-green-50 px-1 rounded">DB Configured</span>
-                                        {cv.file_name}
+                                    <p className="text-sm text-gray-500 font-mono flex items-center gap-2 truncate" title={cv.file_name}>
+                                        {cv.url ? <span className="text-green-600 text-xs border border-green-200 bg-green-50 px-1 rounded shrink-0">Cloud Hosted</span> : <span className="text-orange-500 text-xs border border-orange-200 bg-orange-50 px-1 rounded shrink-0">Local File</span>}
+                                        <span className="truncate">{cv.file_name}</span> • {new Date(cv.created_at).toLocaleDateString()}
                                     </p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 shrink-0">
                                 {!cv.is_default && (
                                     <button
                                         onClick={() => makeDefault(cv.id)}

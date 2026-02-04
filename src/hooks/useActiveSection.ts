@@ -3,9 +3,12 @@ import { useState, useEffect, useRef } from 'react';
 export function useActiveSection(sectionIds: string[]) {
     const [activeSection, setActiveSection] = useState<string>('');
     const observers = useRef<Map<string, number>>(new Map());
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
         const currentObservers = observers.current;
+        // Clean up old observers when dependency changes
+        currentObservers.clear();
 
         const callback = (entries: IntersectionObserverEntry[]) => {
             entries.forEach((entry) => {
@@ -55,9 +58,22 @@ export function useActiveSection(sectionIds: string[]) {
 
     useEffect(() => {
         if (activeSection) {
-            const path = activeSection === 'home' ? '/' : `/${activeSection}`;
-            window.history.replaceState(null, '', path);
+            // Debounce URL updates to avoid performance issues
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+
+            timeoutRef.current = setTimeout(() => {
+                const path = activeSection === 'home' ? '/' : `/${activeSection}`;
+                window.history.replaceState(null, '', path);
+            }, 300);
         }
+
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
     }, [activeSection]);
 
     return activeSection;

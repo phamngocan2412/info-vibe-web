@@ -1,5 +1,5 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { useEffect, lazy, Suspense } from 'react';
+import { useEffect, lazy, Suspense, useRef } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import { Footer, Contact } from './components/Footer';
@@ -16,21 +16,38 @@ const CVManager = lazy(() => import('./components/admin/CVManager'));
 
 function ScrollHandler() {
   const { pathname } = useLocation();
+  const isUserScrolling = useRef(false);
 
   useEffect(() => {
-    // Priority handling for Home/Root
+    // Only scroll on navigation if it wasn't triggered by user scroll
+    // (Note: This simple check might need refinement if URL updates are debounced,
+    // but prevents the immediate loop)
+    if (isUserScrolling.current) {
+      isUserScrolling.current = false;
+      return;
+    }
+
     if (pathname === '/' || pathname === '/home') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
-    // Scroll to section based on path (e.g. /projects -> #projects)
     const sectionId = pathname.replace('/', '');
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   }, [pathname]);
+
+  // Listen for manual scroll events to flag user interaction
+  useEffect(() => {
+    const handleScroll = () => {
+      isUserScrolling.current = true;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return null;
 }

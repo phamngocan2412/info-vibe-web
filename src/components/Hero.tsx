@@ -189,18 +189,6 @@ function Hero({ user, loading }: HeroProps) {
                             {t('hero.contact_me')}
                         </a>
 
-                        {activeCV && (
-                            <a
-                                href={`${activeCV.url}?download=${encodeURIComponent(activeCV.label)}.pdf`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                download={`${activeCV.label}.pdf`}
-                                className="px-8 py-3 bg-secondary hover:bg-emerald-600 text-white rounded-full font-bold transition-all shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-1 flex items-center justify-center gap-2"
-                            >
-                                <FaFileDownload /> <span>Download CV</span>
-                            </a>
-                        )}
-
                         {user && (
                             <a href={user.html_url} target="_blank" rel="noopener noreferrer" className="px-8 py-3 border border-gray-300 dark:border-dark-border text-gray-700 dark:text-white bg-transparent hover:border-primary hover:text-primary dark:hover:border-primary dark:hover:text-primary transition-all flex items-center justify-center gap-2 hover:-translate-y-1 rounded-full font-bold">
                                 <FaGithub /> <span>{t('hero.github_profile')}</span>

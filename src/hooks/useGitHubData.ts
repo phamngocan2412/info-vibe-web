@@ -18,9 +18,17 @@ export function useGitHubData() {
             const cached = localStorage.getItem(CACHE_KEY);
             if (cached) {
                 try {
-                    const { user, repos, timestamp } = JSON.parse(cached);
-                    // Validate cache content isn't empty/broken
-                    if (Date.now() - timestamp < CACHE_DURATION && user && Array.isArray(repos) && repos.length > 0) {
+                    const parsed = JSON.parse(cached);
+                    const { user, repos, timestamp } = parsed;
+
+                    // Validate cache structure and timestamp
+                    // Ensure essential properties exist to prevent runtime errors
+                    const isValidCache =
+                        Date.now() - timestamp < CACHE_DURATION &&
+                        user && typeof user === 'object' && user.login &&
+                        Array.isArray(repos);
+
+                    if (isValidCache) {
                         setUser(user);
                         setRepos(repos);
                         setLoading(false);
