@@ -15,12 +15,15 @@ const Projects = lazy(() => import('./components/Projects'));
 const Experience = lazy(() => import('./components/Experience'));
 const CVManager = lazy(() => import('./components/admin/CVManager'));
 
+import { setProgrammaticScroll } from '@/utils/scrollLock';
+
 function ScrollHandler() {
   const { pathname } = useLocation();
 
   useEffect(() => {
     // Scroll to the top if heading to home/root
     if (pathname === '/' || pathname === '/home') {
+      setProgrammaticScroll(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
@@ -29,6 +32,7 @@ function ScrollHandler() {
     const sectionId = pathname.replace('/', '');
     const element = document.getElementById(sectionId);
     if (element) {
+      setProgrammaticScroll(true);
       const headerOffset = 80;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.scrollY - headerOffset;

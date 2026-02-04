@@ -77,21 +77,8 @@ function Header() {
                             key={item}
                             onClick={() => {
                                 navigate(item === 'home' ? '/' : `/${item}`);
-                                if (item === 'home') {
-                                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                                } else {
-                                    const element = document.getElementById(item);
-                                    if (element) {
-                                        const headerOffset = 80;
-                                        const elementPosition = element.getBoundingClientRect().top;
-                                        const offsetPosition = elementPosition + window.scrollY - headerOffset;
-
-                                        window.scrollTo({
-                                            top: offsetPosition,
-                                            behavior: "smooth"
-                                        });
-                                    }
-                                }
+                                // We rely on the App.tsx's ScrollHandler to handle the scrolling
+                                // when the URL path changes. This prevents scroll conflicts.
                             }}
                             className={`relative px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${activeSection === item
                                 ? 'text-primary'
@@ -168,21 +155,6 @@ function Header() {
                                     }`}
                                 onClick={() => {
                                     navigate(item === 'home' ? '/' : `/${item}`);
-                                    if (item === 'home') {
-                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    } else {
-                                        const element = document.getElementById(item);
-                                        if (element) {
-                                            const headerOffset = 80;
-                                            const elementPosition = element.getBoundingClientRect().top;
-                                            const offsetPosition = elementPosition + window.scrollY - headerOffset;
-
-                                            window.scrollTo({
-                                                top: offsetPosition,
-                                                behavior: "smooth"
-                                            });
-                                        }
-                                    }
                                     closeMobileMenu();
                                 }}
                             >

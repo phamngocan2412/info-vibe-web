@@ -1,9 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
+import { scrollState } from '@/utils/scrollLock';
+import { useLocation } from 'react-router-dom';
 
 export function useActiveSection(sectionIds: string[]) {
     const [activeSection, setActiveSection] = useState<string>('');
     const observers = useRef<Map<string, number>>(new Map());
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const { pathname } = useLocation();
+
+    // Sync active state immediately when URL changes (clicked from nav)
+    useEffect(() => {
+        const section = pathname === '/' ? 'home' : pathname.replace('/', '');
+        if (sectionIds.includes(section)) {
+            setActiveSection(section);
+        }
+    }, [pathname, sectionIds]);
 
     useEffect(() => {
         const currentObservers = observers.current;
@@ -11,6 +22,9 @@ export function useActiveSection(sectionIds: string[]) {
         currentObservers.clear();
 
         const callback = (entries: IntersectionObserverEntry[]) => {
+            // If we are scrolling programmatically (click nav), ignore observer updates
+            if (scrollState.isProgrammaticScroll) return;
+
             entries.forEach((entry) => {
                 if (entry.target.id) {
                     if (entry.isIntersecting) {
