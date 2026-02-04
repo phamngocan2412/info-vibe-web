@@ -1,12 +1,19 @@
-import { useState, useCallback, memo } from 'react';
+import { useState, useCallback, memo, useEffect } from 'react';
 import { useTheme } from '../hooks/useTheme';
-import { FaMoon, FaSun, FaBars } from 'react-icons/fa';
+import { FaMoon, FaSun, FaBars, FaFileDownload } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { useActiveSection } from '../hooks/useActiveSection';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 
 const NAV_ITEMS = ['home', 'about', 'experience', 'skills', 'projects'] as const;
+
+interface CVEntry {
+    url: string;
+    file_name: string;
+    label: string;
+}
 
 function Header() {
     const { theme, toggleTheme } = useTheme();
@@ -14,6 +21,27 @@ function Header() {
     const { t, i18n } = useTranslation();
     const activeSection = useActiveSection(['home', 'about', 'experience', 'skills', 'projects']);
     const navigate = useNavigate();
+    const [activeCV, setActiveCV] = useState<CVEntry | null>(null);
+
+    // Fetch Active CV
+    useEffect(() => {
+        const fetchCV = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('cv_entries')
+                    .select('url, file_name, label')
+                    .eq('is_default', true)
+                    .maybeSingle();
+
+                if (data && !error) {
+                    setActiveCV(data);
+                }
+            } catch (error) {
+                console.error("Error fetching CV in Header:", error);
+            }
+        };
+        fetchCV();
+    }, []);
 
     const toggleLang = useCallback(() => {
         i18n.changeLanguage(i18n.language === 'vi' ? 'en' : 'vi');
@@ -73,6 +101,20 @@ function Header() {
                 </nav>
 
                 <div className="flex items-center gap-4">
+                    {/* CV Download Button - Desktop */}
+                    {activeCV && (
+                        <a
+                            href={`${activeCV.url}?download=${encodeURIComponent(activeCV.label)}.pdf`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            download={`${activeCV.label}.pdf`}
+                            className="hidden md:flex items-center gap-2 px-4 py-2 bg-primary hover:bg-blue-600 text-white text-xs font-bold rounded-full transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
+                        >
+                            <FaFileDownload />
+                            <span>{t('nav.download_cv')}</span>
+                        </a>
+                    )}
+
                     {/* Language Switcher */}
                     <button
                         onClick={toggleLang}
@@ -119,6 +161,20 @@ function Header() {
                                 {t(`nav.${item}`)}
                             </button>
                         ))}
+
+                        {/* Mobile CV Button */}
+                        {activeCV && (
+                            <a
+                                href={`${activeCV.url}?download=${encodeURIComponent(activeCV.label)}.pdf`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                download={`${activeCV.label}.pdf`}
+                                className="flex items-center gap-2 text-sm font-medium text-primary"
+                            >
+                                <FaFileDownload />
+                                <span>{t('nav.download_cv')}</span>
+                            </a>
+                        )}
                     </nav>
                 </div>
             )}

@@ -45,8 +45,6 @@ function Hero({ user, loading }: HeroProps) {
     }, []);
 
     // Memoize ROLES to prevent unnecessary effect reruns
-
-    // Memoize ROLES to prevent unnecessary effect reruns
     const ROLES = useMemo(() =>
         t('hero.roles', { returnObjects: true }) as string[],
         [t]
@@ -161,7 +159,7 @@ function Hero({ user, loading }: HeroProps) {
                     <p className="text-primary font-bold mb-2 tracking-wide uppercase">{t('hero.greeting')}</p>
                     <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 dark:text-white mb-4 leading-tight">
                         {loading ? (
-                             <Skeleton className="h-16 w-3/4 mb-2" />
+                            <Skeleton className="h-16 w-3/4 mb-2" />
                         ) : (
                             <span className="text-gradient">
                                 {(user?.name || user?.login || 'Developer')}

@@ -5,7 +5,8 @@
         "experience": "Experience",
         "skills": "Skills",
         "projects": "Projects",
-        "contact": "Contact"
+        "contact": "Contact",
+        "download_cv": "Download CV"
     },
     "hero": {
         "greeting": "Hello, I am",

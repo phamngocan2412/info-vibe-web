@@ -15,28 +15,31 @@ export const FloatingShapesBackground = ({
             {/* Floating gradient blobs */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 {/* Top right blob - blue */}
-                <div 
-                    className="absolute -top-40 -right-40 w-96 h-96 rounded-full opacity-30 animate-blob"
-                    style={{ 
+                <div
+                    className="absolute -top-40 -right-40 w-96 h-96 rounded-full opacity-30 animate-blob will-change-transform"
+                    style={{
                         background: 'radial-gradient(circle, rgba(59,130,246,0.4) 0%, transparent 70%)',
+                        transform: 'translate3d(0,0,0)',
                     }}
                 />
-                
+
                 {/* Bottom left blob - emerald */}
-                <div 
-                    className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full opacity-25 animate-blob"
-                    style={{ 
+                <div
+                    className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full opacity-25 animate-blob will-change-transform"
+                    style={{
                         background: 'radial-gradient(circle, rgba(16,185,129,0.35) 0%, transparent 70%)',
                         animationDelay: '2s',
+                        transform: 'translate3d(0,0,0)',
                     }}
                 />
-                
+
                 {/* Center blob - purple */}
-                <div 
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-15 animate-blob"
-                    style={{ 
+                <div
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-15 animate-blob will-change-transform"
+                    style={{
                         background: 'radial-gradient(circle, rgba(139,92,246,0.25) 0%, transparent 70%)',
                         animationDelay: '4s',
+                        transform: 'translate3d(0,0,0)',
                     }}
                 />
 

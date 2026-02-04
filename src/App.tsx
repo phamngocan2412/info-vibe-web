@@ -1,21 +1,18 @@
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect, lazy, Suspense } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
-import About from './components/About';
-import Skills from './components/Skills';
-import Projects from './components/Projects';
-import { Contact, Footer } from './components/Footer';
-import Experience from './components/Experience';
+import { Footer, Contact } from './components/Footer';
 import NotFound from './components/NotFound';
-import CVManager from './components/admin/CVManager';
 import { useGitHubData } from './hooks/useGitHubData';
-
-
-
 import { FloatingShapesBackground } from '@/components/animate-ui/components/backgrounds/floating-shapes';
 
-
-import { Routes, Route, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+// Lazy Load Heavy Components
+const About = lazy(() => import('./components/About'));
+const Skills = lazy(() => import('./components/Skills'));
+const Projects = lazy(() => import('./components/Projects'));
+const Experience = lazy(() => import('./components/Experience'));
+const CVManager = lazy(() => import('./components/admin/CVManager'));
 
 function ScrollHandler() {
   const { pathname } = useLocation();
@@ -43,13 +40,17 @@ function MainContent() {
 
   return (
     <main>
+      {/* Hero loaded immediately for LCP */}
       <Hero user={user} loading={loading} />
-      <About user={user} />
-      <Experience />
 
-      <Skills repos={repos} loading={loading} />
-      <Projects repos={repos} loading={loading} />
-      <Contact />
+      {/* Lazy load below-the-fold content */}
+      <Suspense fallback={<div className="h-screen" />}>
+        <About user={user} />
+        <Experience />
+        <Skills repos={repos} loading={loading} />
+        <Projects repos={repos} loading={loading} />
+        <Contact />
+      </Suspense>
     </main>
   );
 }
@@ -76,7 +77,11 @@ function App() {
           <Route path="/projects" element={<MainContent />} />
 
           {/* Hidden Admin Route */}
-          <Route path="/cv-mn" element={<CVManager />} />
+          <Route path="/cv-mn" element={
+            <Suspense fallback={<div>Loading Admin...</div>}>
+              <CVManager />
+            </Suspense>
+          } />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
