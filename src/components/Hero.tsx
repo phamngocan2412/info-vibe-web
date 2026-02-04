@@ -16,6 +16,7 @@ interface HeroProps {
 interface CVEntry {
     url: string;
     file_name: string;
+    label: string;
 }
 
 function Hero({ user, loading }: HeroProps) {
@@ -26,11 +27,12 @@ function Hero({ user, loading }: HeroProps) {
     useEffect(() => {
         const fetchCV = async () => {
             try {
+                // Use maybeSingle() to avoid 406 error when no rows exist
                 const { data, error } = await supabase
                     .from('cv_entries')
-                    .select('url, file_name')
+                    .select('url, file_name, label')
                     .eq('is_default', true)
-                    .single();
+                    .maybeSingle();
 
                 if (data && !error) {
                     setActiveCV(data);
@@ -191,9 +193,10 @@ function Hero({ user, loading }: HeroProps) {
 
                         {activeCV && (
                             <a
-                                href={activeCV.url}
+                                href={`${activeCV.url}?download=${encodeURIComponent(activeCV.label)}.pdf`}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                download={`${activeCV.label}.pdf`}
                                 className="px-8 py-3 bg-secondary hover:bg-emerald-600 text-white rounded-full font-bold transition-all shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-1 flex items-center justify-center gap-2"
                             >
                                 <FaFileDownload /> <span>Download CV</span>

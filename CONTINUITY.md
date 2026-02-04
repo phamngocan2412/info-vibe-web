@@ -25,6 +25,7 @@ Next: Deploy to Coolify and configure DNS.
     - **CV Manager**: Implemented a "Semi-CMS" for managing CVs via a hidden admin route (`/admin/cv-manager`).
     - **Supabase**: Integrated Supabase Client (`src/lib/supabase.ts`) and configured Dockerfile to handle build-time environment variables safely.
     - **Dynamic Database**: Upgraded CV Manager to use Supabase Database (`cv_entries` table) instead of local config, enabling real-time updates without redeployment.
+    - **Optimization**: Implemented "Optimistic UI" in CV Manager for instant feedback (no loading lag) and added PDF Preview Modal.
 
 ## Progress
 - [x] Analyze project structure.
@@ -43,4 +44,5 @@ Next: Deploy to Coolify and configure DNS.
 - [x] Implement Real CV Upload with Supabase Storage.
 - [x] Upgrade to Dynamic Database (Real-time CV updates).
 - [x] Create SUPABASE_SETUP.md with SQL scripts.
+- [x] Optimize CV Manager (Optimistic UI + Preview).
 - [ ] Guide user on Coolify setup and DNS.

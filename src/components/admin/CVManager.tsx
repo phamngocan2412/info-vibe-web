@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FaTrash, FaStar, FaDownload, FaFileUpload, FaSpinner } from 'react-icons/fa';
+import { FaTrash, FaStar, FaDownload, FaFileUpload, FaSpinner, FaEye, FaTimes } from 'react-icons/fa';
 import { supabase } from '../../lib/supabase';
 
 interface CVEntry {
@@ -17,10 +17,13 @@ export default function CVManager() {
     const [uploading, setUploading] = useState(false);
     const [file, setFile] = useState<File | null>(null);
     const [loading, setLoading] = useState(true);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null); // For PDF Preview
 
     // Fetch Real Data from Database
     const fetchCVs = async () => {
-        setLoading(true);
+        // Optimistic: Don't set global loading if we already have data
+        if (cvs.length === 0) setLoading(true);
+
         const { data, error } = await supabase
             .from('cv_entries')
             .select('*')
@@ -53,6 +56,18 @@ export default function CVManager() {
 
         setUploading(true);
         try {
+            // Optimistic UI Update placeholder
+            const tempId = `temp-${Date.now()}`;
+            const optimisticCV: CVEntry = {
+                id: tempId,
+                label: newCV.label,
+                file_name: file.name,
+                url: '', // Temporary
+                is_default: cvs.length === 0,
+                created_at: new Date().toISOString()
+            };
+            setCvs(prev => [optimisticCV, ...prev]);
+
             // 1. Upload to Storage
             const fileExt = file.name.split('.').pop();
             const fileName = `${Date.now()}.${fileExt}`;
@@ -67,19 +82,22 @@ export default function CVManager() {
                 .getPublicUrl(fileName);
 
             // 2. Insert into Database
-            const { error: dbError } = await supabase
+            const { data: insertedData, error: dbError } = await supabase
                 .from('cv_entries')
                 .insert([{
                     label: newCV.label,
                     file_name: file.name,
                     url: publicUrlData.publicUrl,
-                    is_default: cvs.length === 0 // Make default if it's the first one
-                }]);
+                    is_default: cvs.length === 0
+                }])
+                .select() // Select to get the real ID
+                .single();
 
             if (dbError) throw dbError;
 
-            // Refresh list
-            await fetchCVs();
+            // Replace optimistic with real data
+            setCvs(prev => prev.map(cv => cv.id === tempId ? insertedData : cv));
+
             setNewCV({ label: '', fileName: '' });
             setFile(null);
 
@@ -89,6 +107,8 @@ export default function CVManager() {
         } catch (error: any) {
             console.error('Error:', error);
             alert(`Error: ${error.message}`);
+            // Revert optimistic update on failure
+            setCvs(prev => prev.filter(cv => !cv.id.startsWith('temp-')));
         } finally {
             setUploading(false);
         }
@@ -97,41 +117,47 @@ export default function CVManager() {
     const deleteCV = async (id: string) => {
         if (!confirm("Are you sure? This will delete the record.")) return;
 
+        // Optimistic Delete
+        const previousCvs = [...cvs];
+        setCvs(prev => prev.filter(c => c.id !== id));
+
         try {
-            // Extract filename from URL to delete from storage (optional but clean)
-            // For now, just deleting the DB record is enough to hide it
             const { error } = await supabase
                 .from('cv_entries')
                 .delete()
                 .eq('id', id);
 
             if (error) throw error;
-            await fetchCVs();
         } catch (error: any) {
             alert(error.message);
+            setCvs(previousCvs); // Revert
         }
     };
 
     const makeDefault = async (id: string) => {
-        try {
-            // 1. Set all to false
-            await supabase.from('cv_entries').update({ is_default: false }).neq('id', '00000000-0000-0000-0000-000000000000');
+        // Optimistic Update
+        const previousCvs = JSON.parse(JSON.stringify(cvs));
+        setCvs(prev => prev.map(c => ({
+            ...c,
+            is_default: c.id === id
+        })));
 
-            // 2. Set target to true
+        try {
+            await supabase.from('cv_entries').update({ is_default: false }).neq('id', '00000000-0000-0000-0000-000000000000');
             const { error } = await supabase
                 .from('cv_entries')
                 .update({ is_default: true })
                 .eq('id', id);
 
             if (error) throw error;
-            await fetchCVs();
         } catch (error: any) {
             alert(error.message);
+            setCvs(previousCvs); // Revert
         }
     };
 
     return (
-        <div className="min-h-screen pt-24 pb-12 px-6 bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text">
+        <div className="min-h-screen pt-24 pb-12 px-6 bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text relative">
             <div className="max-w-4xl mx-auto">
                 <div className="flex justify-between items-center mb-8">
                     <h1 className="text-3xl font-bold">Live CV Manager (Database)</h1>
@@ -181,9 +207,11 @@ export default function CVManager() {
                 {/* List */}
                 <div className="space-y-4">
                     {loading ? (
-                        <p className="text-center py-8 opacity-50">Loading database...</p>
+                        <div className="flex justify-center py-10">
+                            <FaSpinner className="animate-spin text-4xl text-primary" />
+                        </div>
                     ) : cvs.map(cv => (
-                        <div key={cv.id} className={`flex items-center justify-between p-5 rounded-xl border ${cv.is_default ? 'border-primary bg-primary/5' : 'border-light-border dark:border-dark-border bg-light-card dark:bg-dark-card'}`}>
+                        <div key={cv.id} className={`flex items-center justify-between p-5 rounded-xl border ${cv.is_default ? 'border-primary bg-primary/5' : 'border-light-border dark:border-dark-border bg-light-card dark:bg-dark-card'} transition-all duration-300 hover:shadow-md`}>
                             <div className="flex items-center gap-4">
                                 <div className={`w-10 h-10 rounded-full flex items-center justify-center ${cv.is_default ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-800 text-gray-400'}`}>
                                     <FaStar />
@@ -208,12 +236,19 @@ export default function CVManager() {
                                         Set Default
                                     </button>
                                 )}
+                                <button
+                                    onClick={() => setPreviewUrl(cv.url)}
+                                    className="p-2 text-blue-500 hover:text-blue-700 transition-colors"
+                                    title="Preview"
+                                >
+                                    <FaEye />
+                                </button>
                                 <a
                                     href={cv.url}
                                     target="_blank"
                                     rel="noreferrer"
                                     className="p-2 text-gray-500 hover:text-primary transition-colors"
-                                    title="Preview"
+                                    title="Download"
                                 >
                                     <FaDownload />
                                 </a>
@@ -232,6 +267,30 @@ export default function CVManager() {
                     )}
                 </div>
             </div>
+
+            {/* PDF Preview Modal */}
+            {previewUrl && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+                    <div className="bg-white dark:bg-dark-card w-full max-w-5xl h-[85vh] rounded-2xl overflow-hidden flex flex-col shadow-2xl animate-zoom-in">
+                        <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-dark-border">
+                            <h3 className="font-bold text-lg">PDF Preview</h3>
+                            <button
+                                onClick={() => setPreviewUrl(null)}
+                                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                            >
+                                <FaTimes className="text-xl" />
+                            </button>
+                        </div>
+                        <div className="flex-1 bg-gray-100 dark:bg-gray-900 relative">
+                            <iframe
+                                src={`${previewUrl}#toolbar=0`}
+                                className="w-full h-full"
+                                title="CV Preview"
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
