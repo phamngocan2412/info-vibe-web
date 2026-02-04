@@ -36,7 +36,14 @@ Ensure your repository contains the following critical files (already prepared):
     *   **Docker Compose Location**: Leave as default (`Dockerfile`).
     *   **Port**: `80` (This matches `EXPOSE 80` in our Dockerfile).
 
-4.  **Domain & DNS Configuration**
+4.  **Environment Variables (Supabase)**
+    *   Go to the **Environment Variables** tab in Coolify.
+    *   Add the following keys (Check `.env.example` for reference):
+        *   `VITE_SUPABASE_URL`: `https://bcqupnyajqztolktrbjj.supabase.co`
+        *   `VITE_SUPABASE_ANON_KEY`: `sb_publishable_7v-YTSx-_E4NUx2k4tWHWQ_3Z5WaHLS`
+    *   **Important**: In Coolify, make sure to check the box **"Build Variable"** (or similar) for these variables so they are available during the `npm run build` process inside Docker.
+
+5.  **Domain & DNS Configuration**
     *   In the **Domains** section of your Coolify resource configuration:
         *   Enter your domain (e.g., `https://your-portfolio.com`).
     *   **DNS Settings (at your Registrar/Cloudflare):**
@@ -45,7 +52,7 @@ Ensure your repository contains the following critical files (already prepared):
         *   **Value**: `<Your Coolify Server IP Address>`.
         *   *Note: If using Cloudflare, you can enable the proxy (orange cloud) for SSL, but Coolify also handles SSL automatically via Let's Encrypt if you point the DNS correctly.*
 
-5.  **Deploy**
+6.  **Deploy**
     *   Click the **Deploy** button in Coolify.
     *   **Monitor Logs**: Watch the build logs. It will:
         1.  Clone the repo.

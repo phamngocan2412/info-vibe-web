@@ -1,17 +1,18 @@
 export interface CV {
     id: string;
     label: string;
-    fileName: string; // e.g., "frontend-cv.pdf"
+    fileName: string;
     isDefault: boolean;
     lastUpdated: string;
 }
 
-// Initial Data - You can update this by pasting the JSON generated from the Admin page
+// Dữ liệu CV được cấu hình trực tiếp tại đây
+// Bạn chỉ cần thay đổi "fileName" thành tên file PDF thực tế của bạn trong thư mục public/cvs/
 export const cvList: CV[] = [
     {
-        id: "1",
-        label: "Full Stack Developer",
-        fileName: "placeholder-cv.pdf",
+        id: "default-cv",
+        label: "My CV",
+        fileName: "my-cv.pdf", // Đảm bảo file này tồn tại trong public/cvs/
         isDefault: true,
         lastUpdated: "2024-02-04"
     }

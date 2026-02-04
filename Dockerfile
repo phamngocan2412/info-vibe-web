@@ -12,6 +12,14 @@ RUN npm install
 # Copy the rest of the application
 COPY . .
 
+# Receive Build Arguments from Coolify/Docker
+ARG VITE_SUPABASE_URL
+ARG VITE_SUPABASE_ANON_KEY
+
+# Set Environment Variables so Vite can see them during build
+ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
+ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
+
 # Build the application
 RUN npm run build
 

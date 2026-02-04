@@ -6,6 +6,7 @@ import Projects from './components/Projects';
 import { Contact, Footer } from './components/Footer';
 import Experience from './components/Experience';
 import NotFound from './components/NotFound';
+import CVManager from './components/admin/CVManager';
 import { useGitHubData } from './hooks/useGitHubData';
 
 
@@ -73,6 +74,10 @@ function App() {
           <Route path="/experience" element={<MainContent />} />
           <Route path="/skills" element={<MainContent />} />
           <Route path="/projects" element={<MainContent />} />
+
+          {/* Hidden Admin Route */}
+          <Route path="/admin/cv-manager" element={<CVManager />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
 

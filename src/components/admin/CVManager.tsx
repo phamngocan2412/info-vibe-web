@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FaTrash, FaStar, FaDownload, FaPlus, FaCopy, FaCheck } from 'react-icons/fa';
-import { cvList, CV } from '../../data/cv';
+import { cvList } from '../../data/cv';
+import type { CV } from '../../data/cv';
 
 export default function CVManager() {
     const [cvs, setCvs] = useState<CV[]>(cvList);

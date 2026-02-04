@@ -22,6 +22,8 @@ Next: Deploy to Coolify and configure DNS.
 - **Technical**:
     - **SEO**: Added Open Graph and Twitter Card meta tags for professional social sharing.
     - **PWA**: Configured as a Progressive Web App (installable) with `vite-plugin-pwa`.
+    - **CV Manager**: Implemented a "Semi-CMS" for managing CVs via a hidden admin route (`/admin/cv-manager`).
+    - **Supabase**: Integrated Supabase Client (`src/lib/supabase.ts`) and configured Dockerfile to handle build-time environment variables safely.
 
 ## Progress
 - [x] Analyze project structure.
@@ -35,4 +37,6 @@ Next: Deploy to Coolify and configure DNS.
 - [x] Create DEPLOY.md guide.
 - [x] Implement SEO & Open Graph tags.
 - [x] Configure PWA (Installable App).
+- [x] Implement Hidden CV Manager System.
+- [x] Setup Supabase Client & Fix Docker Build Args.
 - [ ] Guide user on Coolify setup and DNS.
