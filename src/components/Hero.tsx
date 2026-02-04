@@ -1,8 +1,8 @@
 import { useEffect, useState, useMemo, useRef, useCallback, memo } from 'react';
-import { FaGithub, FaFileDownload } from 'react-icons/fa';
+import { FaGithub } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import type { GitHubUser } from '../types';
-import { supabase } from '../lib/supabase';
+
 
 import { motion } from 'framer-motion';
 import { fadeIn, zoomIn } from '../utils/motion';
@@ -13,36 +13,11 @@ interface HeroProps {
     loading: boolean;
 }
 
-interface CVEntry {
-    url: string;
-    file_name: string;
-    label: string;
-}
+
 
 function Hero({ user, loading }: HeroProps) {
     const { t } = useTranslation();
-    const [activeCV, setActiveCV] = useState<CVEntry | null>(null);
 
-    // Fetch Active CV from Supabase
-    useEffect(() => {
-        const fetchCV = async () => {
-            try {
-                // Use maybeSingle() to avoid 406 error when no rows exist
-                const { data, error } = await supabase
-                    .from('cv_entries')
-                    .select('url, file_name, label')
-                    .eq('is_default', true)
-                    .maybeSingle();
-
-                if (data && !error) {
-                    setActiveCV(data);
-                }
-            } catch (error) {
-                console.error("Error fetching CV:", error);
-            }
-        };
-        fetchCV();
-    }, []);
 
     // Memoize ROLES to prevent unnecessary effect reruns
     const ROLES = useMemo(() =>
