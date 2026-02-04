@@ -2,7 +2,7 @@
 
 ## Ledger Snapshot
 Goal: Deploy info-vibe-web to Coolify with a custom domain.
-Now: Completed UI/UX improvements (Contact Form, Skeletons, Fonts) and prepared deployment guide.
+Now: Completed all UI/UX upgrades and Technical optimizations (SEO, PWA). Ready for final deployment.
 Next: Deploy to Coolify and configure DNS.
 
 ## Project Context
@@ -19,6 +19,9 @@ Next: Deploy to Coolify and configure DNS.
     - **Contact**: Integrated Web3Forms for direct email sending without opening mail app.
     - **Typography**: Added 'Outfit' font for headings to give a premium feel.
     - **Loading**: Implemented Skeleton loaders for Hero, Skills, and Projects sections.
+- **Technical**:
+    - **SEO**: Added Open Graph and Twitter Card meta tags for professional social sharing.
+    - **PWA**: Configured as a Progressive Web App (installable) with `vite-plugin-pwa`.
 
 ## Progress
 - [x] Analyze project structure.
@@ -30,4 +33,6 @@ Next: Deploy to Coolify and configure DNS.
 - [x] Implement Skeleton Loaders.
 - [x] Update Typography (Outfit font).
 - [x] Create DEPLOY.md guide.
+- [x] Implement SEO & Open Graph tags.
+- [x] Configure PWA (Installable App).
 - [ ] Guide user on Coolify setup and DNS.
