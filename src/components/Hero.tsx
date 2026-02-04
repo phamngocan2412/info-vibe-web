@@ -8,6 +8,8 @@ import { fadeIn, zoomIn } from '../utils/motion';
 
 // import loadingGif from '../assets/load-profile.gif';
 
+import { Skeleton } from './ui/Skeleton';
+
 interface HeroProps {
     user: GitHubUser | null;
     loading: boolean;
@@ -130,17 +132,29 @@ function Hero({ user, loading }: HeroProps) {
                 >
                     <p className="text-primary font-bold mb-2 tracking-wide uppercase">{t('hero.greeting')}</p>
                     <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 dark:text-white mb-4 leading-tight">
-                        <span className="text-gradient">
-                            {loading ? 'Loading...' : (user?.name || user?.login || 'Developer')}
-                        </span>
+                        {loading ? (
+                             <Skeleton className="h-16 w-3/4 mb-2" />
+                        ) : (
+                            <span className="text-gradient">
+                                {(user?.name || user?.login || 'Developer')}
+                            </span>
+                        )}
                     </h1>
                     <h2 className="text-2xl md:text-3xl text-gray-600 dark:text-dark-muted mb-6 font-light h-10 flex items-center justify-center md:justify-start gap-1">
                         <span>{text}</span>
                         <span className="animate-pulse text-primary">|</span>
                     </h2>
-                    <p className="text-gray-600 dark:text-dark-muted mb-8 text-lg leading-relaxed max-w-lg mx-auto md:mx-0">
-                        {loading ? '...' : (user?.bio || t('hero.default_bio'))}
-                    </p>
+                    <div className="text-gray-600 dark:text-dark-muted mb-8 text-lg leading-relaxed max-w-lg mx-auto md:mx-0 min-h-[80px]">
+                        {loading ? (
+                            <div className="space-y-2">
+                                <Skeleton className="h-4 w-full" />
+                                <Skeleton className="h-4 w-5/6" />
+                                <Skeleton className="h-4 w-4/6" />
+                            </div>
+                        ) : (
+                            <p>{(user?.bio || t('hero.default_bio'))}</p>
+                        )}
+                    </div>
                     <motion.div
                         variants={fadeIn("up", "tween", 0.4, 1)}
                         className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start"

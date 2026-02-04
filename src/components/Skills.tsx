@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { motion, useInView } from 'framer-motion';
 import { fadeIn, staggerContainer, zoomIn } from '../utils/motion';
 import type { GitHubRepo } from '../types';
+import { Skeleton } from './ui/Skeleton';
 import { SiJavascript, SiTypescript, SiDart, SiCplusplus, SiSwift, SiGo, SiRust, SiKotlin, SiPhp, SiRuby, SiMysql, SiPostgresql, SiMongodb, SiRedis, SiDocker, SiNginx, SiLinux, SiGit, SiHtml5, SiCss3, SiReact } from 'react-icons/si';
 import { FaJava, FaPython, FaNodeJs } from 'react-icons/fa';
 
@@ -75,7 +76,9 @@ export default function Skills({ repos, loading }: SkillsProps) {
                     <p>{t('skills.subtitle')}</p>
                     <div id="dynamic-skills" className="flex flex-wrap justify-center gap-3 mt-6">
                         {loading ? (
-                            <p className="animate-pulse">Loading skills...</p>
+                             Array.from({ length: 15 }).map((_, i) => (
+                                <Skeleton key={i} className="h-10 w-24 rounded-full" />
+                             ))
                         ) : (
                             <>
                                 {skills.map((lang, index) => (

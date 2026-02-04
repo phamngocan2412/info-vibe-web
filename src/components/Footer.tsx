@@ -1,5 +1,5 @@
 import { useState, useCallback, memo } from 'react';
-import { FaPaperPlane, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
+import { FaPaperPlane, FaPhoneAlt, FaEnvelope, FaSpinner, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 
 import { useTranslation } from 'react-i18next';
 
@@ -10,13 +10,37 @@ export const Contact = memo(function Contact() {
         email: '',
         message: ''
     });
+    const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
-    const handleSubmit = useCallback((e: React.FormEvent) => {
+    const handleSubmit = useCallback(async (e: React.FormEvent) => {
         e.preventDefault();
-        const { name, email, message } = formData;
-        const subject = encodeURIComponent(`Contact from ${name} - Info Vibe Web`);
-        const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
-        window.location.href = `mailto:itisfuture2412@gmail.com?subject=${subject}&body=${body}`;
+        setStatus('submitting');
+
+        const data = new FormData();
+        data.append("access_key", "81e69322-9fee-416a-8951-db88093adca9");
+        data.append("name", formData.name);
+        data.append("email", formData.email);
+        data.append("message", formData.message);
+
+        try {
+            const response = await fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                body: data
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                setStatus('success');
+                setFormData({ name: '', email: '', message: '' });
+                setTimeout(() => setStatus('idle'), 5000);
+            } else {
+                setStatus('error');
+            }
+        } catch (error) {
+            console.error("Error submitting form", error);
+            setStatus('error');
+        }
     }, [formData]);
 
     const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -41,6 +65,7 @@ export const Contact = memo(function Contact() {
                                 <input
                                     type="text"
                                     id="name"
+                                    name="name"
                                     value={formData.name}
                                     onChange={handleChange}
                                     required
@@ -52,6 +77,7 @@ export const Contact = memo(function Contact() {
                                 <input
                                     type="email"
                                     id="email"
+                                    name="email"
                                     value={formData.email}
                                     onChange={handleChange}
                                     required
@@ -63,6 +89,7 @@ export const Contact = memo(function Contact() {
                             <label htmlFor="message" className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">{t('contact.message')}</label>
                             <textarea
                                 id="message"
+                                name="message"
                                 rows={5}
                                 value={formData.message}
                                 onChange={handleChange}
@@ -70,9 +97,35 @@ export const Contact = memo(function Contact() {
                                 className="w-full bg-light-card dark:bg-dark-bg border border-light-border dark:border-dark-border rounded-lg px-4 py-3 text-light-text dark:text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder-light-muted dark:placeholder-gray-600"
                             ></textarea>
                         </div>
-                        <button type="submit" className="w-full bg-gradient-to-r from-primary to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 rounded-lg transition-all shadow-lg shadow-blue-500/20 transform hover:-translate-y-1 flex items-center justify-center">
-                            <span>{t('contact.send')}</span> <FaPaperPlane className="ml-2" />
-                        </button>
+
+                        <div className="relative">
+                            <button
+                                type="submit"
+                                disabled={status === 'submitting'}
+                                className={`w-full bg-gradient-to-r from-primary to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 rounded-lg transition-all shadow-lg shadow-blue-500/20 transform hover:-translate-y-1 flex items-center justify-center ${status === 'submitting' ? 'opacity-70 cursor-not-allowed' : ''}`}
+                            >
+                                {status === 'submitting' ? (
+                                    <>
+                                        <FaSpinner className="animate-spin mr-2" />
+                                        <span>Sending...</span>
+                                    </>
+                                ) : status === 'success' ? (
+                                    <>
+                                        <span>Sent Successfully</span> <FaCheckCircle className="ml-2" />
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>{t('contact.send')}</span> <FaPaperPlane className="ml-2" />
+                                    </>
+                                )}
+                            </button>
+
+                            {status === 'error' && (
+                                <p className="text-red-500 text-sm mt-2 flex items-center justify-center animate-pulse">
+                                    <FaExclamationCircle className="mr-1" /> Failed to send message. Please try again.
+                                </p>
+                            )}
+                        </div>
                     </form>
                 </div>
             </div>

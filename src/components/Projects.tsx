@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { FaBookOpen, FaStar, FaCodeBranch, FaCircle, FaArrowRight } from 'react-icons/fa';
 import type { GitHubRepo } from '../types';
+import { Skeleton } from './ui/Skeleton';
 
 import { useTranslation } from 'react-i18next';
 import { motion, useInView } from 'framer-motion';
@@ -47,9 +48,24 @@ export default function Projects({ repos, loading }: ProjectsProps) {
 
                 <div id="projects-container" className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {loading ? (
-                        <div className="col-span-full flex justify-center py-10">
-                            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-                        </div>
+                         Array.from({ length: 6 }).map((_, i) => (
+                            <div key={i} className="bg-light-card dark:bg-dark-card rounded-2xl p-6 border border-light-border dark:border-dark-border shadow-lg h-full flex flex-col">
+                                <div className="flex justify-between items-start mb-4">
+                                    <Skeleton className="h-10 w-10 rounded-lg" />
+                                    <div className="flex gap-2">
+                                        <Skeleton className="h-4 w-12" />
+                                        <Skeleton className="h-4 w-12" />
+                                    </div>
+                                </div>
+                                <Skeleton className="h-6 w-3/4 mb-2" />
+                                <Skeleton className="h-4 w-full mb-1" />
+                                <Skeleton className="h-4 w-full mb-4" />
+                                <div className="mt-auto pt-4 border-t border-gray-100 dark:border-dark-border flex justify-between">
+                                    <Skeleton className="h-5 w-16" />
+                                    <Skeleton className="h-5 w-20" />
+                                </div>
+                            </div>
+                         ))
                     ) : !Array.isArray(repos) || repos.length === 0 ? (
                         <p className="text-center col-span-full text-gray-500">{t('projects.no_projects')}</p>
                     ) : (
