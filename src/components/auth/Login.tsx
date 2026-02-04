@@ -15,8 +15,9 @@ export default function Login() {
             const { error } = await supabase.auth.signInWithOtp({
                 email: ADMIN_EMAIL,
                 options: {
-                    // Redirect back to the current page after login
-                    emailRedirectTo: window.location.href,
+                    // Redirect back to the origin (base domain) to avoid issues with query params
+                    // Ensure Supabase "Site URL" and "Redirect URLs" are configured to match this
+                    emailRedirectTo: window.location.origin + '/cv-mn',
                 },
             });
 
