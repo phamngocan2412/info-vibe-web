@@ -14,20 +14,23 @@ export function useActiveSection(sectionIds: string[]) {
             entries.forEach((entry) => {
                 if (entry.target.id) {
                     if (entry.isIntersecting) {
-                        currentObservers.set(entry.target.id, entry.intersectionRatio);
+                        // Use visible height (intersectionRect.height) to determine the "most visible" section
+                        // This fixes the issue where small sections (high ratio) override large sections (low ratio)
+                        const visibleHeight = entry.intersectionRect.height;
+                        currentObservers.set(entry.target.id, visibleHeight);
                     } else {
                         currentObservers.delete(entry.target.id);
                     }
                 }
             });
 
-            // Find the section with the highest intersection ratio
-            let maxRatio = 0;
+            // Find the section with the highest visible height
+            let maxHeight = 0;
             let bestCandidate = '';
 
-            currentObservers.forEach((ratio, id) => {
-                if (ratio > maxRatio) {
-                    maxRatio = ratio;
+            currentObservers.forEach((height, id) => {
+                if (height > maxHeight) {
+                    maxHeight = height;
                     bestCandidate = id;
                 }
             });
@@ -38,7 +41,7 @@ export function useActiveSection(sectionIds: string[]) {
         };
 
         const observer = new IntersectionObserver(callback, {
-            rootMargin: '-10% 0px -10% 0px', // check roughly the whole viewport with some buffer
+            rootMargin: '-80px 0px -70% 0px', // check roughly the whole viewport with some buffer
             threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1] // Multiple thresholds for granular updates
         });
 

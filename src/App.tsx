@@ -1,11 +1,12 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { useEffect, lazy, Suspense, useRef } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import { Footer, Contact } from './components/Footer';
 import NotFound from './components/NotFound';
 import { useGitHubData } from './hooks/useGitHubData';
 import { FloatingShapesBackground } from '@/components/animate-ui/components/backgrounds/floating-shapes';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 // Lazy Load Heavy Components
 const About = lazy(() => import('./components/About'));
@@ -16,38 +17,28 @@ const CVManager = lazy(() => import('./components/admin/CVManager'));
 
 function ScrollHandler() {
   const { pathname } = useLocation();
-  const isUserScrolling = useRef(false);
 
   useEffect(() => {
-    // Only scroll on navigation if it wasn't triggered by user scroll
-    // (Note: This simple check might need refinement if URL updates are debounced,
-    // but prevents the immediate loop)
-    if (isUserScrolling.current) {
-      isUserScrolling.current = false;
-      return;
-    }
-
+    // Scroll to the top if heading to home/root
     if (pathname === '/' || pathname === '/home') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
+    // Scroll to section based on pathname
     const sectionId = pathname.replace('/', '');
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      const headerOffset = 80;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
   }, [pathname]);
-
-  // Listen for manual scroll events to flag user interaction
-  useEffect(() => {
-    const handleScroll = () => {
-      isUserScrolling.current = true;
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   return null;
 }
@@ -95,9 +86,11 @@ function App() {
 
           {/* Hidden Admin Route */}
           <Route path="/cv-mn" element={
-            <Suspense fallback={<div>Loading Admin...</div>}>
-              <CVManager />
-            </Suspense>
+            <ProtectedRoute allowedEmail="phamngocanh7679@gmail.com">
+              <Suspense fallback={<div>Loading Admin...</div>}>
+                <CVManager />
+              </Suspense>
+            </ProtectedRoute>
           } />
 
           <Route path="*" element={<NotFound />} />
