@@ -40,4 +40,5 @@ Next: Deploy to Coolify and configure DNS.
 - [x] Implement Hidden CV Manager System.
 - [x] Setup Supabase Client & Fix Docker Build Args.
 - [x] Implement Real CV Upload with Supabase Storage.
+- [x] Create SUPABASE_SETUP.md with SQL scripts.
 - [ ] Guide user on Coolify setup and DNS.
