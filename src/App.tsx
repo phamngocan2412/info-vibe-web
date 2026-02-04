@@ -76,7 +76,7 @@ function App() {
           <Route path="/projects" element={<MainContent />} />
 
           {/* Hidden Admin Route */}
-          <Route path="/admin/cv-manager" element={<CVManager />} />
+          <Route path="/cv-mn" element={<CVManager />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

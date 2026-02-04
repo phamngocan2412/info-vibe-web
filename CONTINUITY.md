@@ -22,7 +22,7 @@ Next: Deploy to Coolify and configure DNS.
 - **Technical**:
     - **SEO**: Added Open Graph and Twitter Card meta tags for professional social sharing.
     - **PWA**: Configured as a Progressive Web App (installable) with `vite-plugin-pwa`.
-    - **CV Manager**: Implemented a "Semi-CMS" for managing CVs via a hidden admin route (`/admin/cv-manager`).
+    - **CV Manager**: Implemented a "Semi-CMS" for managing CVs via a hidden admin route (`/cv-mn`).
     - **Supabase**: Integrated Supabase Client (`src/lib/supabase.ts`) and configured Dockerfile to handle build-time environment variables safely.
     - **Dynamic Database**: Upgraded CV Manager to use Supabase Database (`cv_entries` table) instead of local config, enabling real-time updates without redeployment.
     - **Optimization**: Implemented "Optimistic UI" in CV Manager for instant feedback (no loading lag) and added PDF Preview Modal.

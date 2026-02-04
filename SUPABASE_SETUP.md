@@ -60,5 +60,5 @@ create policy "Enable delete for all users" on public.cv_entries for delete usin
 1. Run the SQL above.
 2. Go to **Table Editor** in Supabase.
 3. You should see a new table `cv_entries`.
-4. Go back to your website Admin page (`/admin/cv-manager`), upload a CV, and click "Set Default".
+4. Go back to your website Admin page (`/cv-mn`), upload a CV, and click "Set Default".
 5. Go to the Home page and refresh. The Download button should link to the new CV instantly.
