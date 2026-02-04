@@ -24,6 +24,7 @@ Next: Deploy to Coolify and configure DNS.
     - **PWA**: Configured as a Progressive Web App (installable) with `vite-plugin-pwa`.
     - **CV Manager**: Implemented a "Semi-CMS" for managing CVs via a hidden admin route (`/admin/cv-manager`).
     - **Supabase**: Integrated Supabase Client (`src/lib/supabase.ts`) and configured Dockerfile to handle build-time environment variables safely.
+    - **Dynamic Database**: Upgraded CV Manager to use Supabase Database (`cv_entries` table) instead of local config, enabling real-time updates without redeployment.
 
 ## Progress
 - [x] Analyze project structure.
@@ -40,5 +41,6 @@ Next: Deploy to Coolify and configure DNS.
 - [x] Implement Hidden CV Manager System.
 - [x] Setup Supabase Client & Fix Docker Build Args.
 - [x] Implement Real CV Upload with Supabase Storage.
+- [x] Upgrade to Dynamic Database (Real-time CV updates).
 - [x] Create SUPABASE_SETUP.md with SQL scripts.
 - [ ] Guide user on Coolify setup and DNS.

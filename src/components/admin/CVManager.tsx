@@ -1,33 +1,44 @@
 import { useState, useEffect } from 'react';
-import { FaTrash, FaStar, FaDownload, FaCopy, FaCheck, FaFileUpload, FaSpinner } from 'react-icons/fa';
-import { cvList } from '../../data/cv';
-import type { CV } from '../../data/cv';
+import { FaTrash, FaStar, FaDownload, FaFileUpload, FaSpinner } from 'react-icons/fa';
 import { supabase } from '../../lib/supabase';
 
+interface CVEntry {
+    id: string;
+    label: string;
+    file_name: string;
+    url: string;
+    is_default: boolean;
+    created_at: string;
+}
+
 export default function CVManager() {
-    const [cvs, setCvs] = useState<CV[]>(cvList);
+    const [cvs, setCvs] = useState<CVEntry[]>([]);
     const [newCV, setNewCV] = useState({ label: '', fileName: '' });
     const [uploading, setUploading] = useState(false);
-    const [copied, setCopied] = useState(false);
     const [file, setFile] = useState<File | null>(null);
+    const [loading, setLoading] = useState(true);
 
-    // Load from localStorage first to simulate persistence during session
-    useEffect(() => {
-        const stored = localStorage.getItem('local_cv_list');
-        if (stored) {
-            setCvs(JSON.parse(stored));
+    // Fetch Real Data from Database
+    const fetchCVs = async () => {
+        setLoading(true);
+        const { data, error } = await supabase
+            .from('cv_entries')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (!error && data) {
+            setCvs(data);
         }
-    }, []);
-
-    const saveToLocal = (newList: CV[]) => {
-        setCvs(newList);
-        localStorage.setItem('local_cv_list', JSON.stringify(newList));
+        setLoading(false);
     };
+
+    useEffect(() => {
+        fetchCVs();
+    }, []);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             setFile(e.target.files[0]);
-            // Auto-fill filename if empty
             if (!newCV.fileName) {
                 setNewCV(prev => ({ ...prev, fileName: e.target.files![0].name }));
             }
@@ -42,128 +53,93 @@ export default function CVManager() {
 
         setUploading(true);
         try {
-            // 1. Upload to Supabase Storage
+            // 1. Upload to Storage
             const fileExt = file.name.split('.').pop();
             const fileName = `${Date.now()}.${fileExt}`;
-            const filePath = `${fileName}`;
-
             const { error: uploadError } = await supabase.storage
                 .from('cvs')
-                .upload(filePath, file);
+                .upload(fileName, file);
 
             if (uploadError) throw uploadError;
 
-            // 2. Get Public URL
-            const { data } = supabase.storage
+            const { data: publicUrlData } = supabase.storage
                 .from('cvs')
-                .getPublicUrl(filePath);
+                .getPublicUrl(fileName);
 
-            // 3. Add to List
-            const newItem: CV = {
-                id: Date.now().toString(),
-                label: newCV.label,
-                fileName: file.name,
-                url: data.publicUrl,
-                isDefault: cvs.length === 0,
-                lastUpdated: new Date().toISOString().split('T')[0]
-            };
+            // 2. Insert into Database
+            const { error: dbError } = await supabase
+                .from('cv_entries')
+                .insert([{
+                    label: newCV.label,
+                    file_name: file.name,
+                    url: publicUrlData.publicUrl,
+                    is_default: cvs.length === 0 // Make default if it's the first one
+                }]);
 
-            saveToLocal([...cvs, newItem]);
+            if (dbError) throw dbError;
+
+            // Refresh list
+            await fetchCVs();
             setNewCV({ label: '', fileName: '' });
             setFile(null);
 
-            // Reset file input
             const fileInput = document.getElementById('cv-file-input') as HTMLInputElement;
             if (fileInput) fileInput.value = '';
 
         } catch (error: any) {
-            console.error('Upload error:', error);
-            alert(`Upload failed: ${error.message || 'Unknown error'}`);
+            console.error('Error:', error);
+            alert(`Error: ${error.message}`);
         } finally {
             setUploading(false);
         }
     };
 
-    const deleteCV = (id: string) => {
-        const newList = cvs.filter(c => c.id !== id);
-        if (cvs.find(c => c.id === id)?.isDefault && newList.length > 0) {
-            newList[0].isDefault = true;
+    const deleteCV = async (id: string) => {
+        if (!confirm("Are you sure? This will delete the record.")) return;
+
+        try {
+            // Extract filename from URL to delete from storage (optional but clean)
+            // For now, just deleting the DB record is enough to hide it
+            const { error } = await supabase
+                .from('cv_entries')
+                .delete()
+                .eq('id', id);
+
+            if (error) throw error;
+            await fetchCVs();
+        } catch (error: any) {
+            alert(error.message);
         }
-        saveToLocal(newList);
     };
 
-    const makeDefault = (id: string) => {
-        const newList = cvs.map(c => ({
-            ...c,
-            isDefault: c.id === id
-        }));
-        saveToLocal(newList);
-    };
+    const makeDefault = async (id: string) => {
+        try {
+            // 1. Set all to false
+            await supabase.from('cv_entries').update({ is_default: false }).neq('id', '00000000-0000-0000-0000-000000000000');
 
-    const generateConfig = () => {
-        const config = `export interface CV {
-    id: string;
-    label: string;
-    fileName: string;
-    url?: string;
-    isDefault: boolean;
-    lastUpdated: string;
-}
+            // 2. Set target to true
+            const { error } = await supabase
+                .from('cv_entries')
+                .update({ is_default: true })
+                .eq('id', id);
 
-export const cvList: CV[] = ${JSON.stringify(cvs, null, 4)};
-
-export const getActiveCV = (): CV | undefined => {
-    return cvList.find(cv => cv.isDefault) || cvList[0];
-};`;
-        navigator.clipboard.writeText(config);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+            if (error) throw error;
+            await fetchCVs();
+        } catch (error: any) {
+            alert(error.message);
+        }
     };
 
     return (
         <div className="min-h-screen pt-24 pb-12 px-6 bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text">
             <div className="max-w-4xl mx-auto">
                 <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold">Hidden CV Manager</h1>
-                    <button
-                        onClick={generateConfig}
-                        className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
-                    >
-                        {copied ? <FaCheck /> : <FaCopy />}
-                        <span>{copied ? 'Copied Config!' : 'Copy Config to Clipboard'}</span>
-                    </button>
+                    <h1 className="text-3xl font-bold">Live CV Manager (Database)</h1>
                 </div>
 
-                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-8 border border-blue-200 dark:border-blue-800 text-sm">
-                    <strong>Supabase Storage Setup Required:</strong>
-                    <p className="mt-1 mb-2">Before uploading, go to your Supabase Dashboard &rarr; Storage and create a bucket named <code>cvs</code>.</p>
-                    <details>
-                        <summary className="cursor-pointer font-bold text-blue-600 dark:text-blue-400">View SQL Policy (Required for Public Access)</summary>
-                        <pre className="bg-gray-100 dark:bg-gray-800 p-3 rounded mt-2 overflow-x-auto text-xs font-mono">
-                            {`-- 1. Create bucket (if not exists via UI)
-insert into storage.buckets (id, name, public) values ('cvs', 'cvs', true);
-
--- 2. Allow public access to read files
-create policy "Public Access"
-  on storage.objects for select
-  using ( bucket_id = 'cvs' );
-
--- 3. Allow authenticated users (anon/service_role) to upload
-create policy "Allow Uploads"
-  on storage.objects for insert
-  with check ( bucket_id = 'cvs' );`}
-                        </pre>
-                    </details>
-                </div>
-
-                <div className="bg-yellow-100 dark:bg-yellow-900/30 p-4 rounded-lg mb-8 border border-yellow-200 dark:border-yellow-700 text-sm">
-                    <strong>Workflow:</strong>
-                    <ol className="list-decimal list-inside mt-2 space-y-1">
-                        <li>Upload your PDF below (it goes to Supabase Cloud).</li>
-                        <li>Manage your list (Delete old ones, Set Default).</li>
-                        <li>Click <strong>"Copy Config"</strong>.</li>
-                        <li>Paste into <code>src/data/cv.ts</code> &rarr; Commit &rarr; Push.</li>
-                    </ol>
+                <div className="bg-green-100 dark:bg-green-900/30 p-4 rounded-lg mb-8 border border-green-200 dark:border-green-700 text-sm">
+                    <strong>Real-time System Active:</strong>
+                    <p className="mt-1">Changes made here update the Home page immediately. No build/deploy required.</p>
                 </div>
 
                 {/* Add New */}
@@ -204,25 +180,27 @@ create policy "Allow Uploads"
 
                 {/* List */}
                 <div className="space-y-4">
-                    {cvs.map(cv => (
-                        <div key={cv.id} className={`flex items-center justify-between p-5 rounded-xl border ${cv.isDefault ? 'border-primary bg-primary/5' : 'border-light-border dark:border-dark-border bg-light-card dark:bg-dark-card'}`}>
+                    {loading ? (
+                        <p className="text-center py-8 opacity-50">Loading database...</p>
+                    ) : cvs.map(cv => (
+                        <div key={cv.id} className={`flex items-center justify-between p-5 rounded-xl border ${cv.is_default ? 'border-primary bg-primary/5' : 'border-light-border dark:border-dark-border bg-light-card dark:bg-dark-card'}`}>
                             <div className="flex items-center gap-4">
-                                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${cv.isDefault ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-800 text-gray-400'}`}>
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${cv.is_default ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-800 text-gray-400'}`}>
                                     <FaStar />
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-lg flex items-center gap-2">
                                         {cv.label}
-                                        {cv.isDefault && <span className="text-xs bg-primary text-white px-2 py-0.5 rounded-full">Default</span>}
+                                        {cv.is_default && <span className="text-xs bg-primary text-white px-2 py-0.5 rounded-full">Default</span>}
                                     </h3>
                                     <p className="text-sm text-gray-500 font-mono flex items-center gap-2">
-                                        {cv.url ? <span className="text-green-600 text-xs border border-green-200 bg-green-50 px-1 rounded">Cloud Hosted</span> : <span className="text-orange-500 text-xs border border-orange-200 bg-orange-50 px-1 rounded">Local File</span>}
-                                        {cv.fileName} • {cv.lastUpdated}
+                                        <span className="text-green-600 text-xs border border-green-200 bg-green-50 px-1 rounded">DB Configured</span>
+                                        {cv.file_name}
                                     </p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
-                                {!cv.isDefault && (
+                                {!cv.is_default && (
                                     <button
                                         onClick={() => makeDefault(cv.id)}
                                         className="px-3 py-1.5 text-sm border border-primary text-primary rounded hover:bg-primary hover:text-white transition-colors"
@@ -231,7 +209,7 @@ create policy "Allow Uploads"
                                     </button>
                                 )}
                                 <a
-                                    href={cv.url || `/cvs/${cv.fileName}`}
+                                    href={cv.url}
                                     target="_blank"
                                     rel="noreferrer"
                                     className="p-2 text-gray-500 hover:text-primary transition-colors"
@@ -249,8 +227,8 @@ create policy "Allow Uploads"
                             </div>
                         </div>
                     ))}
-                    {cvs.length === 0 && (
-                        <p className="text-center text-gray-500 py-8">No CVs added yet.</p>
+                    {!loading && cvs.length === 0 && (
+                        <p className="text-center text-gray-500 py-8">No CVs found in database.</p>
                     )}
                 </div>
             </div>

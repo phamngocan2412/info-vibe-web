@@ -2,10 +2,10 @@ import { useEffect, useState, useMemo, useRef, useCallback, memo } from 'react';
 import { FaGithub, FaFileDownload } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import type { GitHubUser } from '../types';
+import { supabase } from '../lib/supabase';
 
 import { motion } from 'framer-motion';
 import { fadeIn, zoomIn } from '../utils/motion';
-import { getActiveCV } from '../data/cv';
 import { Skeleton } from './ui/Skeleton';
 
 interface HeroProps {
@@ -13,8 +13,36 @@ interface HeroProps {
     loading: boolean;
 }
 
+interface CVEntry {
+    url: string;
+    file_name: string;
+}
+
 function Hero({ user, loading }: HeroProps) {
     const { t } = useTranslation();
+    const [activeCV, setActiveCV] = useState<CVEntry | null>(null);
+
+    // Fetch Active CV from Supabase
+    useEffect(() => {
+        const fetchCV = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('cv_entries')
+                    .select('url, file_name')
+                    .eq('is_default', true)
+                    .single();
+
+                if (data && !error) {
+                    setActiveCV(data);
+                }
+            } catch (error) {
+                console.error("Error fetching CV:", error);
+            }
+        };
+        fetchCV();
+    }, []);
+
+    // Memoize ROLES to prevent unnecessary effect reruns
 
     // Memoize ROLES to prevent unnecessary effect reruns
     const ROLES = useMemo(() =>
@@ -30,8 +58,6 @@ function Hero({ user, loading }: HeroProps) {
     const [roleIndex, setRoleIndex] = useState(0);
     const [isDeleting, setIsDeleting] = useState(false);
     const [imgLoaded, setImgLoaded] = useState(false);
-
-    const activeCV = getActiveCV();
 
     const handleImageLoad = useCallback(() => {
         setImgLoaded(true);
@@ -165,7 +191,7 @@ function Hero({ user, loading }: HeroProps) {
 
                         {activeCV && (
                             <a
-                                href={activeCV.url || `/cvs/${activeCV.fileName}`}
+                                href={activeCV.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="px-8 py-3 bg-secondary hover:bg-emerald-600 text-white rounded-full font-bold transition-all shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-1 flex items-center justify-center gap-2"
