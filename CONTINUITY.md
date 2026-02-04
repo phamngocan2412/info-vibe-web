@@ -39,4 +39,5 @@ Next: Deploy to Coolify and configure DNS.
 - [x] Configure PWA (Installable App).
 - [x] Implement Hidden CV Manager System.
 - [x] Setup Supabase Client & Fix Docker Build Args.
+- [x] Implement Real CV Upload with Supabase Storage.
 - [ ] Guide user on Coolify setup and DNS.

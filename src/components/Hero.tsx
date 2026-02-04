@@ -165,7 +165,7 @@ function Hero({ user, loading }: HeroProps) {
 
                         {activeCV && (
                             <a
-                                href={`/cvs/${activeCV.fileName}`}
+                                href={activeCV.url || `/cvs/${activeCV.fileName}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="px-8 py-3 bg-secondary hover:bg-emerald-600 text-white rounded-full font-bold transition-all shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-1 flex items-center justify-center gap-2"

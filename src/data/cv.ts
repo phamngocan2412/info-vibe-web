@@ -2,17 +2,20 @@ export interface CV {
     id: string;
     label: string;
     fileName: string;
+    url?: string; // New field for Supabase URL
     isDefault: boolean;
     lastUpdated: string;
 }
 
 // Dữ liệu CV được cấu hình trực tiếp tại đây
-// Bạn chỉ cần thay đổi "fileName" thành tên file PDF thực tế của bạn trong thư mục public/cvs/
 export const cvList: CV[] = [
     {
         id: "default-cv",
         label: "My CV",
-        fileName: "my-cv.pdf", // Đảm bảo file này tồn tại trong public/cvs/
+        fileName: "my-cv.pdf",
+        // Nếu dùng Supabase, url sẽ trông như: https://xyz.supabase.co/.../my-cv.pdf
+        // Nếu chưa có url, nó sẽ fallback về /cvs/fileName trong code Hero.tsx
+        url: undefined,
         isDefault: true,
         lastUpdated: "2024-02-04"
     }
